@@ -1,77 +1,363 @@
-# {{ cookiecutter.project_name }}
+# CEHRT FHIR Customer Endpoint Slurp
 
-{{ cookiecutter.project_description }}
+A comprehensive data processing pipeline for extracting, analyzing, and normalizing EHR (Electronic Health Records) FHIR endpoint data from healthcare providers. This tool helps assess HTI-2 compliance and generates normalized datasets for healthcare interoperability analysis.
 
-## About the Project
+Current home is [/DSACMS/npd_ehr_fhir_npi_slurp](https://github.com/DSACMS/npd_ehr_fhir_npi_slurp).
+Assumes that the json data is being saved to [https://github.com/ftrotter-gov/npd_ehr_scrape_cache](https://github.com/ftrotter-gov/npd_ehr_scrape_cache)
 
-**{project_statement}**
+## Problem Documentaion
 
-<!---
-### Project Vision
-**{project vision}** -->
+* [Understanding Endpoints in SAAS vs on-prem EHR instances](./docs/fhir_tenancy_explained.md)
 
-<!--
-### Project Mission
-**{project mission}** -->
+## Overview
 
-<!--
-### Agency Mission
-TODO: Good to include since this is an agency-led project -->
+This project processes FHIR endpoint data through a multi-step pipeline:
 
-<!--
-### Team Mission
-TODO: Good to include since this is an agency-led project -->
+1. **Extract List Sources** - Analyzes Lantern CSV data to identify unique EHR vendor service endpoints
+2. **Download Service Data** - Retrieves FHIR Bundle JSON files from EHR vendors
+3. **Parse FHIR Bundles** - Breaks down large FHIR bundles into individual resource files
+4. **Extract & Normalize** - Creates normalized CSV datasets with proper data validation
 
-<!--
-## Core Team
+## Features
 
-A list of core team members responsible for the code and documentation in this repository can be found in [COMMUNITY.md](COMMUNITY.md).
--->
+### Now
 
-<!--
-## Repository Structure
+* **NPI Validation**: Real-time validation against CMS NPI Registry API
+* **Data Deduplication**: Hash-based deduplication for efficient storage
+* **Error Handling**: Comprehensive error tracking and reporting
+* **Test Mode**: Limited processing for development and validation
+* **Progress Tracking**: Visual progress indicators for long-running operations
 
-TODO: Including the repository structure helps viewers quickly understand the project layout. Using the "tree -d" command can be a helpful way to generate this information, but, be sure to update it as the project evolves and changes over time.
+### Future
 
-**{list directories and descriptions}**
+We can and will handle these later on in the process, so we are not implementing them up-front for now.
 
-TODO: Add a 'table of contents" for your documentation. Tier 0/1 projects with simple README.md files without many sections may or may not need this, but it is still extremely helpful to provide "bookmark" or "anchor" links to specific sections of your file to be referenced in tickets, docs, or other communication channels.
+* **Phone Number Normalization**: International phone number parsing and validation
+* **Address Standardization**: Structured address parsing and normalization (waiting on Smarty Streets for full implementation)  
 
-**{list of .md at top directory and descriptions}**
+## Quick Start
 
--->
+### Prerequisites
 
-<!---
-## Local Development
+* Python 3.8+
+* Virtual environment (recommended)
 
- TODO - with example below:
-This project is monorepo with several apps. Please see the [api](./api/README.md) and [frontend](./frontend/README.md) READMEs for information on spinning up those projects locally. Also see the project [documentation](./documentation) for more info.
--->
+### Basic Usage
 
-<!--
-## Coding Style and Linters
+#### Option 1: New FHIR Cache Parser (Recommended)
 
-TODO - Add the repo's linting and code style guidelines
+For processing existing FHIR cache data directly into PostgreSQL-ready format:
 
-Each application has its own linting and testing guidelines. Lint and code tests are run on each commit, so linters and tests should be run locally before committing.
- -->
+```bash
+# Process entire FHIR cache
+python -m cehrt_fhir_parser.cli --cache-dir /path/to/fhir_json_cache --output-dir ./csv_output
 
-<!---
-## Branching Model
+# Test mode (limited processing for validation)
+python -m cehrt_fhir_parser.cli --cache-dir /path/to/fhir_json_cache --output-dir ./csv_output --test
 
-TODO - with example below:
-This project follows [trunk-based development](https://trunkbaseddevelopment.com/), which means:
+# With verbose output
+python -m cehrt_fhir_parser.cli --cache-dir /path/to/fhir_json_cache --output-dir ./csv_output --verbose
+```
 
-* Make small changes in [short-lived feature branches](https://trunkbaseddevelopment.com/short-lived-feature-branches/) and merge to `main` frequently.
-* Be open to submitting multiple small pull requests for a single ticket (i.e. reference the same ticket across multiple pull requests).
-* Treat each change you merge to `main` as immediately deployable to production. Do not merge changes that depend on subsequent changes you plan to make, even if you plan to make those changes shortly.
-* Ticket any unfinished or partially finished work.
-* Tests should be written for changes introduced, and adhere to the text percentage threshold determined by the project.
+#### Option 2: Legacy Pipeline
 
-This project uses **continuous deployment** using [Github Actions](https://github.com/features/actions) which is configured in the [./github/workflows](.github/workflows) directory.
+First download the endpoint data from the [Lantern Dashboard download page](https://lantern.healthit.gov/?tab=downloads_tab)
+Put that data in local_data/prod_data/fhir_endpoints.csv
 
-Pull-requests are merged to `main` and the changes are immediately deployed to the development environment. Releases are created to push changes to production.
--->
+Then choose either go.py or manual running of the pipeline step-by-step:
+
+```bash
+# Run the complete pipeline
+python go.py
+```
+
+Or you can look inside go.py to understand what specific steps should be run.
+
+## FHIR Cache Parser (New)
+
+The FHIR Cache Parser is a modern, streamlined approach for processing FHIR endpoint data directly from cached JSON files.
+
+### Features
+
+* **Direct Cache Processing**: Processes FHIR JSON files directly from vendor cache directories
+* **Dual Output Format**: Generates both FHIR-focused and NPD-compliant CSV files
+* **NPI Validation**: Real-time validation with 9M+ cached NPIs and CMS API fallback
+* **UUID5 Generation**: Deterministic UUIDs for referential integrity
+* **Field Coverage Tracking**: Comprehensive data loss analysis and reporting
+* **PostgreSQL Ready**: CSV files formatted for direct database import
+* **Performance Optimized**: Singleton patterns and efficient memory usage
+
+### Output Files
+
+The parser generates two sets of CSV files:
+
+#### FHIR Analysis Files (Original)
+* `ehr_vendor.csv` - EHR vendor information
+* `organization.csv` - FHIR Organization resources with metadata
+* `endpoint_instance.csv` - FHIR Endpoint resources with validation
+* `endpoint_instance_to_other_id.csv` - NPI validation results
+* `endpoint_instance_to_payload.csv` - Payload type mappings
+* `data_lineage.csv` - Complete traceability records
+* `field_coverage_log.csv` - Data processing coverage analysis
+
+#### NPD Schema Files (Database Ready)
+* `npd_endpoint_instance.csv` - Endpoints matching `full_npd.sql` schema
+* `npd_endpoint_instance_to_other_id.csv` - Clean NPI relationships
+* `npd_endpoint_instance_to_payload.csv` - Payload mappings
+
+### Processing Report
+
+Each run generates a detailed JSON processing report with:
+* Processing statistics and success rates
+* Resource counts by type
+* Vendor-by-vendor coverage analysis
+* Error logs and validation results
+* Performance metrics
+
+### Example Usage
+
+```bash
+# Process production cache with full validation
+python -m cehrt_fhir_parser.cli \
+  --cache-dir ../npd_ehr_scrape_cache/cache/fhir_json_cache \
+  --output-dir ./production_output
+
+# Test mode for development
+python -m cehrt_fhir_parser.cli \
+  --cache-dir ./test_cache \
+  --output-dir ./test_output \
+  --test \
+  --verbose
+```
+
+## Legacy Pipeline Steps
+
+### Step 1: Extract List Sources
+
+**File**: `Step10_extract_list_source_from_lantern_csv.py`
+
+Processes Lantern FHIR endpoint CSV files to extract unique service list sources by EHR vendor.
+
+**Input**: CSV with FHIR endpoint data from Lantern
+**Output**: `list_sources_summary.csv` with distinct list sources and URL counts
+
+### Step 2: Download Service Data
+
+**File**: `Step20_download_list_source_json.py`
+
+Downloads FHIR Bundle JSON files from EHR vendor service endpoints.
+
+**Features**:
+* Respectful rate limiting with configurable delays
+* Safe filename generation from vendor names
+* Error handling and retry logic
+* Progress tracking
+* Creates JSON files in CEHRT cache directory
+
+### Step 3: Parse FHIR Bundles
+
+**File**: `Step30_parse_source_bundle.py`
+
+Breaks down large FHIR Bundle files into individual resource entries for easier processing.
+
+**Features**:
+* Batch processing of multiple JSON files
+* Extracts individual FHIR Bundle entries into separate JSON files
+* Resource type categorization
+* Comprehensive error reporting with CSV logs
+* Progress reporting
+
+### Step 4: Extract & Normalize Data
+
+**File**: `Step40_extract_csv_data.py`
+
+Creates normalized CSV datasets from FHIR Organization resources with NPI validation.
+
+**Features**:
+* Two-pass processing for endpoint reference mapping
+* NPI validation using NPIValidator class
+* Phone number normalization using international standards
+* Hash-based deduplication
+* Test mode support (first 1000 files per vendor)
+
+**Output Files**:
+* `step40_distinct_organizations.csv` - Valid organizations (with NPI + endpoint)
+* `step40_distinct_addresses.csv` - Normalized address data
+* `step40_distinct_endpoints.csv` - FHIR endpoint references
+* `step40_distinct_phones.csv` - Validated phone numbers with international formatting
+* `step40_distinct_contact_urls.csv` - Contact URLs
+* `step40_distinct_contact_emails.csv` - Email addresses
+* `step40_org_to_*.csv` - Relationship mapping files
+* `step40_processing_errors.csv` - Error log
+
+### Step 5: Clean and Validate Data
+
+**File**: `Step50_simple_clean_output.py`
+
+Cleans the org_to_npi data by filtering for valid HTTPS URLs and 10-digit NPIs, then checks domain responsiveness.
+
+**Features**:
+* Filters for valid HTTPS URLs and 10-digit NPI numbers
+* Tests domain responsiveness (accepts 200-499 status codes)
+* Respectful rate limiting between domain checks
+* Comprehensive logging
+
+**Input**: `step40_org_to_npi.csv`
+**Output**: `step50_clean_npi_to_org_fhir_url.csv` with cleaned data
+
+### Step 6: Discover FHIR Endpoints
+
+**File**: `Step60_CalculateOpenEndpoints.py`
+
+Enriches data by discovering well-known FHIR endpoints at multiple directory levels for each domain.
+
+**Features**:
+* Tests multiple directory levels for each domain
+* Discovers 6 endpoint types: Capability Statement, SMART Config, OpenAPI docs/JSON, Swagger docs/JSON
+* Chooses best HTTPS organizational URL
+* Rate limiting between requests
+
+**Endpoint Discovery**:
+* `/metadata` - FHIR Capability Statement
+* `/.well-known/smart-configuration` - SMART on FHIR configuration
+* `/api-docs` - OpenAPI documentation
+* `/openapi.json` - OpenAPI specification
+* `/swagger` - Swagger documentation  
+* `/swagger.json` - Swagger specification
+
+**Input**: `step50_clean_npi_to_org_fhir_url.csv`
+**Output**: `step60_enriched_endpoints.csv` with endpoint discovery results
+
+### Step 89: Generate CEHRT Dashboard CSV
+
+**File**: `Step89_GenerateCEHRTDashboardCSV.py`
+
+Aggregates compliance results per CEHRT vendor for dashboard visualization.
+
+**Features**:
+* Reads vendor mapping from list sources summary
+* Combines endpoint discovery with partial compliance data
+* Aggregates per-vendor compliance across all endpoints
+* Handles vendors with data in different pipeline stages
+
+**Compliance Checks**:
+* Reachable (domain responsive)
+* Has ONPI (valid 10-digit NPI)
+* HTTPS ORG URL (secure endpoint available)
+* Findable endpoints (Metadata, SMART, OpenAPI, Swagger)
+
+**Input**: Multiple CSV files from previous steps
+**Output**: `step89_CEHRT_FHIR_Report.csv` with vendor compliance summary
+
+### Step 90: Create CEHRT Dashboard
+
+**File**: `Step90_MakeCEHRTDashboard.py`
+
+Creates a visual HTML dashboard showing CEHRT vendor compliance with icons.
+
+**Features**:
+* Converts CSV compliance data to visual HTML table
+* Uses green icons for passing checks, red X for failures
+* Makes successful endpoint URLs clickable links
+* Sorts vendors by compliance score (most compliant first)
+
+**Icon Mapping**:
+* Green check marks for basic compliance (Up, ONPI)
+* Themed icons for different endpoint types (FHIR fire icons)
+* Red X for all failures
+* Clickable links to actual discovered endpoints
+
+**Input**: `step89_CEHRT_FHIR_Report.csv`
+**Output**: `step90_CEHRT_FHIR_Report.md` - Visual compliance dashboard
+
+## Data Validation
+
+### NPI Validation
+
+* Format validation (10-digit requirement)
+* API validation against the list of valid NPIs in ./npi_validation_data/, which falls back to using the Registery for missing npis. See [NPIValidator_README.md](NPIValidator_README.md) for more info.
+* Invalid NPI flagging based on format validation
+
+### Phone Number Validation
+
+* International format parsing using `phonenumbers` library
+* Extension extraction and normalization
+* Country code standardization
+* Validation status tracking
+
+### Data Quality Requirements
+
+Organizations must have:
+* At least one valid NPI identifier
+* At least one FHIR endpoint
+* Valid organizational name
+
+## Configuration
+
+### Environment Variables
+
+```bash
+# Optional: Set custom timeout for API requests
+export FHIR_REQUEST_TIMEOUT=30
+
+# Optional: Set custom delay between downloads
+export DOWNLOAD_DELAY=1.0
+```
+
+## Output Data Structure
+
+### Organizations Table
+
+* `org_id` - FHIR Organization ID
+* `org_name` - Organization name
+* `vendor_name` - EHR vendor name
+* `active` - Organization status
+* `*_count` - Counts of related data elements
+
+### Relationship Tables
+
+Link organizations to their associated data:
+
+* NPIs (with validation status)
+* Addresses (normalized)
+* Phone numbers (validated)
+* Endpoints (FHIR references)
+* Contact information
+
+## Error Handling
+
+The pipeline includes comprehensive error handling:
+* File processing errors logged to `processing_errors.csv`
+* API validation errors tracked per NPI
+* Network timeout handling with retries
+* Malformed data detection and reporting
+
+## Performance Considerations
+
+* **Memory Usage**: Large FHIR bundles are processed incrementally
+* **API Rate Limiting**: Built-in delays for NPI validation API
+* **Disk Space**: Intermediate files can be large; monitor disk usage
+* **Processing Time**: Full pipeline may take several hours for large datasets
+
+## Development
+
+### Testing
+
+```bash
+# Run tests
+pytest
+
+# Run with coverage
+pytest --cov=.
+```
+
+### Adding New Steps
+
+1. Create new `StepXX_description.py` file
+2. Follow existing patterns for argument parsing
+3. Add comprehensive error handling
+4. Update `go.sh` script
+5. Document in README
 
 ## Policies
 
@@ -87,9 +373,9 @@ _Submit a vulnerability:_ Vulnerability reports can be submitted through [Bugcro
 
 A Software Bill of Materials (SBOM) is a formal record containing the details and supply chain relationships of various components used in building software.
 
-In the spirit of [Executive Order 14028 - Improving the Nation's Cyber Security](https://www.gsa.gov/technology/it-contract-vehicles-and-purchasing-programs/information-technology-category/it-security/executive-order-14028), a SBOM for this repository is provided here: https://github.com/{{ cookiecutter.project_org }}/{{ cookiecutter.project_repo_name }}/network/dependencies.
+In the spirit of [Executive Order 14028 - Improving the Nation's Cyber Security](https://www.gsa.gov/technology/it-contract-vehicles-and-purchasing-programs/information-technology-category/it-security/executive-order-14028), a SBOM for this repository is provided here: <https://github.com/{{> cookiecutter.project_org }}/{{ cookiecutter.project_repo_name }}/network/dependencies.
 
-For more information and resources about SBOMs, visit: https://www.cisa.gov/sbom.
+For more information and resources about SBOMs, visit: <https://www.cisa.gov/sbom>.
 
 ## Public domain
 
