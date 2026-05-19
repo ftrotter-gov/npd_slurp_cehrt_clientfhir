@@ -5,14 +5,9 @@ import re
 import phonenumbers
 from phonenumbers import NumberParseException
 from typing import Dict, Optional, Any
-from pathlib import Path
-import sys
-
-# Add the parent directory to sys.path to import NPIValidator
-sys.path.append(str(Path(__file__).parent.parent.parent))
 
 try:
-    from NPIValidator import NPIValidator as ExternalNPIValidator
+    from .npi_validator import NPIValidator as ExternalNPIValidator
     HAS_NPI_VALIDATOR = True
 except ImportError:
     HAS_NPI_VALIDATOR = False

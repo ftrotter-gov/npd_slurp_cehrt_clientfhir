@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cehrt-fhir-parser"
+version = "1.0.0"
+description = "FHIR cache parser for CEHRT endpoint data"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "pandas>=2.3",
+    "phonenumbers>=9.0",
+    "requests>=2.33",
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest>=8.0",
+]
+
+[project.scripts]
+cehrt-fhir-parser = "cehrt_fhir_parser.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["cehrt_fhir_parser*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+

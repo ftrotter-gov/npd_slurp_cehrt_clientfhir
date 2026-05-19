@@ -1,0 +1,26 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+build/
+dist/
+*.egg-info/
+
+# Local parser output and generated reports
+csv_output/
+production_output/
+test_cache/
+test_cache_dir/
+test_output_dir/
+parser_output/
+CEHRT_FHIR_Report.csv
+CEHRT_FHIR_Report.md
+parse_test/
+parser_output_contact_test/
+test_output/
+test_data/
+fhir_json_test_data/
+local_data_backup/
