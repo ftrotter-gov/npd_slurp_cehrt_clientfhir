@@ -2,7 +2,7 @@
 
 This project processes cached CEHRT FHIR JSON resources into normalized CSV files for endpoint analysis and PostgreSQL import.
 
-The parser assumes FHIR JSON data is already available in a cache repository such as [ftrotter-gov/npd_ehr_scrape_cache](https://github.com/ftrotter-gov/npd_ehr_scrape_cache). Cache acquisition and legacy step-based processing have been removed from this codebase.
+The parser assumes FHIR JSON data is already available in a cache directory. Cache acquisition and legacy step-based processing have been removed from this codebase.
 
 ## Problem Documentation
 
@@ -37,7 +37,7 @@ Process a FHIR cache:
 
 ```bash
 python -m cehrt_fhir_parser.cli \
-  --cache-dir ../npd_ehr_scrape_cache/cache/fhir_json_cache \
+  --cache-dir ../npd_slurp_cehrt_clientfhir_cache/cache/fhir_json_cache \
   --output-dir ./csv_output
 ```
 
@@ -45,7 +45,7 @@ Run a limited development pass:
 
 ```bash
 python -m cehrt_fhir_parser.cli \
-  --cache-dir ../npd_ehr_scrape_cache/cache/fhir_json_cache \
+  --cache-dir ../npd_slurp_cehrt_clientfhir_cache/cache/fhir_json_cache \
   --output-dir ./csv_output \
   --test \
   --verbose
@@ -55,7 +55,7 @@ Run in parallel and merge outputs:
 
 ```bash
 python -m cehrt_fhir_parser.cli \
-  --cache-dir ../npd_ehr_scrape_cache/cache/fhir_json_cache \
+  --cache-dir ../npd_slurp_cehrt_clientfhir_cache/cache/fhir_json_cache \
   --output-dir ./csv_output \
   --parallel
 

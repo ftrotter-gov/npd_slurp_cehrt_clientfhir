@@ -10,7 +10,7 @@ The supported workflow is now:
 
 ```bash
 python -m cehrt_fhir_parser.cli \
-  --cache-dir ../npd_ehr_scrape_cache/cache/fhir_json_cache \
+  --cache-dir ../npd_slurp_cehrt_clientfhir_cache/cache/fhir_json_cache \
   --output-dir ./csv_output
 ```
 
@@ -88,7 +88,7 @@ Added pytest tests under `tests/`:
 - `tests/test_validators.py`
 - `tests/conftest.py`
 
-The tests generate fixture data in temporary directories. They do not require network access or `../npd_ehr_scrape_cache`.
+The tests generate fixture data in temporary directories. They do not require network access or the cache directory.
 
 ### Documentation
 

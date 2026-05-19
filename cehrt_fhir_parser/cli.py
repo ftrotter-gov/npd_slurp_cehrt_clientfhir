@@ -19,10 +19,10 @@ def create_argument_parser():
         epilog="""
 Examples:
   # Process entire cache
-  python -m cehrt_fhir_parser.cli --cache-dir ../npd_ehr_scrape_cache/cache/fhir_json_cache --output-dir ./csv_output
+  python -m cehrt_fhir_parser.cli --cache-dir ../npd_slurp_cehrt_clientfhir_cache/cache/fhir_json_cache --output-dir ./csv_output
 
   # Test mode (limited processing)
-  python -m cehrt_fhir_parser.cli --cache-dir ../npd_ehr_scrape_cache/cache/fhir_json_cache --output-dir ./csv_output --test
+  python -m cehrt_fhir_parser.cli --cache-dir ../npd_slurp_cehrt_clientfhir_cache/cache/fhir_json_cache --output-dir ./csv_output --test
 
   # Specify custom report file
   python -m cehrt_fhir_parser.cli --cache-dir ./test_cache --output-dir ./csv_output --report-file ./processing_report.json
