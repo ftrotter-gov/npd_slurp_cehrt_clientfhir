@@ -24,3 +24,5 @@ test_output/
 test_data/
 fhir_json_test_data/
 local_data_backup/
+
+data_files.env
