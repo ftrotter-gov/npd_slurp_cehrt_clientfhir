@@ -47,11 +47,62 @@ def get_env_var(*, key, default_value):
 
 
 def check_virtual_env():
-    """Check if virtual environment is activated."""
+    """
+    Check if virtual environment is activated and requirements are installed.
+    
+    This is a critical safety check that prevents the pipeline from running
+    without proper Python dependencies. Returns immediately with exit code 1
+    if VIRTUAL_ENV is not set or required packages are missing.
+    
+    Raises:
+        SystemExit: Exits with code 1 if virtual environment is not detected or requirements not met
+    """
+    # Check if virtual environment is activated
     if not os.environ.get('VIRTUAL_ENV'):
-        print("Warning: Virtual environment not detected. Consider running:")
-        print("source source_me_to_get_venv.sh")
+        print("=" * 60)
+        print("ERROR: Virtual environment is NOT activated!")
+        print("=" * 60)
         print("")
+        print("The pipeline requires an active virtual environment to run.")
+        print("")
+        print("To set up and activate the virtual environment:")
+        print("")
+        print("1. Create virtual environment (if not done):")
+        print("   python3 -m venv venv")
+        print("")
+        print("2. Activate the virtual environment:")
+        print("   source venv/bin/activate")
+        print("")
+        print("3. Install requirements:")
+        print("   pip install -r requirements.txt")
+        print("")
+        print("4. Re-run this command")
+        print("=" * 60)
+        sys.exit(1)
+    
+    # Check if required packages are installed
+    required_packages = ['pandas', 'phonenumbers', 'requests', 'dotenv']
+    missing_packages = []
+    
+    for package in required_packages:
+        try:
+            __import__(package)
+        except ImportError:
+            missing_packages.append(package)
+    
+    if missing_packages:
+        print("=" * 60)
+        print("ERROR: Required Python packages are NOT installed!")
+        print("=" * 60)
+        print("")
+        print(f"Missing packages: {', '.join(missing_packages)}")
+        print("")
+        print("To install requirements, run:")
+        print("  pip install -r requirements.txt")
+        print("")
+        print("Then re-run this command.")
+        print("=" * 60)
+        sys.exit(1)
 
 
 def run_step(*, step_num, description, command_args, success_message=None):

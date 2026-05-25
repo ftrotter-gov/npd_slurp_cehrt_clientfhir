@@ -75,7 +75,7 @@ def load_vendor_lookup_table():
     vendor_lookup = {}
     
     # Get the CEHRT cache directory from environment
-    cehrt_cache_dir = os.getenv('CEHRT_CACHE_DIR', '../npd_slurp_cehrt_clientfhir_cache/cehrt_fhir_json/')
+    cehrt_cache_dir = os.getenv('CEHRT_CACHE_DIR', '../npd_slurp_cehrt_clientfhir_cache/cache/fhir_json_cache/')
     lookup_file = Path(cehrt_cache_dir) / 'step20_output_summary.csv'
     
     if not lookup_file.exists():
