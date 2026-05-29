@@ -261,12 +261,23 @@ def main():
         print("SUCCESS: Processing completed successfully!")
         print("="*60)
         
-        # Check for high error rates
+        # Check for high error rates (only in sequential mode where success_rate is calculated)
         summary = report_data.get('processing_summary', {})
-        success_rate = summary.get('success_rate', 0)
-        if success_rate < 50:
-            print(f"WARNING: Low success rate ({success_rate:.1f}%). Check error logs.")
-            sys.exit(1)
+        parallel_mode = summary.get('parallel_mode', False)
+        
+        if not parallel_mode:
+            # Sequential mode: check success rate
+            success_rate = summary.get('success_rate', 0)
+            if success_rate < 50:
+                print(f"WARNING: Low success rate ({success_rate:.1f}%). Check error logs.")
+                sys.exit(1)
+        else:
+            # Parallel mode: check if any workers failed
+            parallel_results = report_data.get('parallel_results', {})
+            workers_failed = parallel_results.get('workers_failed', 0)
+            if workers_failed > 0:
+                print(f"WARNING: {workers_failed} worker(s) failed. Check error logs.")
+                sys.exit(1)
         
         sys.exit(0)
         

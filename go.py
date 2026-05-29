@@ -105,6 +105,27 @@ def check_virtual_env():
         sys.exit(1)
 
 
+def check_file_has_data(*, file_path: str, min_lines: int = 2) -> bool:
+    """
+    Check if a file exists and has data (more than just headers).
+    
+    Args:
+        file_path: Path to the file
+        min_lines: Minimum number of lines (default 2: header + at least 1 data row)
+    
+    Returns:
+        True if file exists and has enough lines, False otherwise
+    """
+    try:
+        with open(file_path, 'r') as f:
+            line_count = sum(1 for _ in f)
+        return line_count >= min_lines
+    except FileNotFoundError:
+        return False
+    except Exception:
+        return False
+
+
 def run_step(*, step_num, description, command_args, success_message=None):
     """
     Run a pipeline step with proper error handling and logging.
@@ -315,6 +336,15 @@ def run_step_50():
     input_file = get_env_var(key="ORG_TO_NPI_RAW", default_value="../npd_slurp_cehrt_clientfhir_cache/cache/summary_data/step40_org_to_npi.csv")
     output_file = get_env_var(key="CLEAN_NPI_TO_ORG_FHIR_URL", default_value="../npd_slurp_cehrt_clientfhir_cache/cache/summary_data/step50_clean_npi_to_org_fhir_url.csv")
     
+    # Check prerequisite: Step 40 must have produced data
+    if not check_file_has_data(file_path=input_file, min_lines=2):
+        print(f"⚠️  Step 50: SKIPPED - Prerequisite data missing")
+        print(f"   Required: {input_file} (with data)")
+        print(f"   Reason: Step 40 produced no valid organizations")
+        print(f"   Note: Organizations need both a valid NPI and FHIR endpoint")
+        print("")
+        return
+    
     run_step(
         step_num=50,
         description="Cleaning org_to_npi CSV data (validating URLs and NPIs)",
@@ -330,6 +360,15 @@ def run_step_60():
     """Step 60: Calculate open endpoints."""
     input_csv = get_env_var(key="CLEAN_NPI_TO_ORG_FHIR_URL", default_value="../npd_slurp_cehrt_clientfhir_cache/cache/summary_data/step50_clean_npi_to_org_fhir_url.csv")
     output_csv = get_env_var(key="ENRICHED_ENDPOINTS", default_value="../npd_slurp_cehrt_clientfhir_cache/cache/summary_data/step60_enriched_endpoints.csv")
+    
+    # Check prerequisite: Step 50 must have produced data
+    if not check_file_has_data(file_path=input_csv, min_lines=2):
+        print(f"⚠️  Step 60: SKIPPED - Prerequisite data missing")
+        print(f"   Required: {input_csv} (with data)")
+        print(f"   Reason: Step 50 produced no clean NPI mappings")
+        print(f"   Note: Run Steps 40 and 50 first with valid data")
+        print("")
+        return
     
     run_step(
         step_num=60,
@@ -349,6 +388,15 @@ def run_step_89():
     org_to_npi_path = get_env_var(key="ORG_TO_NPI_RAW", default_value="../npd_slurp_cehrt_clientfhir_cache/cache/summary_data/step40_org_to_npi.csv")
     output_csv_path = get_env_var(key="CEHRT_FHIR_REPORT_CSV", default_value="../npd_slurp_cehrt_clientfhir_cache/cache/summary_data/step89_CEHRT_FHIR_Report.csv")
     
+    # Check prerequisites: Step 60 must have produced data
+    if not check_file_has_data(file_path=enriched_endpoints_path, min_lines=2):
+        print(f"⚠️  Step 89: SKIPPED - Prerequisite data missing")
+        print(f"   Required: {enriched_endpoints_path} (with data)")
+        print(f"   Reason: Step 60 hasn't produced enriched endpoints")
+        print(f"   Note: Run Steps 40, 50, and 60 first with valid data")
+        print("")
+        return
+    
     run_step(
         step_num=89,
         description="Generating CEHRT Dashboard CSV with compliance data",
@@ -366,6 +414,15 @@ def run_step_90():
     """Step 90: Make CEHRT Dashboard Markdown."""
     input_csv_path = get_env_var(key="CEHRT_FHIR_REPORT_CSV", default_value="../npd_slurp_cehrt_clientfhir_cache/cache/summary_data/step89_CEHRT_FHIR_Report.csv")
     output_md_path = get_env_var(key="CEHRT_FHIR_REPORT_MD", default_value="../npd_slurp_cehrt_clientfhir_cache/cache/summary_data/step90_CEHRT_FHIR_Report.md")
+    
+    # Check prerequisite: Step 89 must have produced data
+    if not check_file_has_data(file_path=input_csv_path, min_lines=2):
+        print(f"⚠️  Step 90: SKIPPED - Prerequisite data missing")
+        print(f"   Required: {input_csv_path} (with data)")
+        print(f"   Reason: Step 89 hasn't produced the dashboard CSV")
+        print(f"   Note: Run Steps 40, 50, 60, and 89 first with valid data")
+        print("")
+        return
     
     run_step(
         step_num=90,
