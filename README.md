@@ -43,82 +43,134 @@ VERBOSE_MODE=true python go.py
 
 ## Pipeline Stages
 
-The pipeline consists of 4 main stages. You can run the complete pipeline with `go.py` or start at any stage by running individual steps:
+The pipeline consists of multiple stages that can be run individually or together using `go.py`. Each stage is numbered (10, 20, 30, 40, 45, 50, 60, 89, 90) and can be executed independently:
 
-### Stage 1: Extract List Sources
+### Running Individual Stages
+
+```bash
+# Run a single stage
+python go.py --steps 10
+
+# Run multiple specific stages
+python go.py --steps 10 20 30
+
+# Run a range of stages
+python go.py --steps 10-60
+
+# Run all stages (default)
+python go.py
+```
+
+### Stage 10: Extract List Sources
 
 Analyzes Lantern CSV data to identify unique EHR vendor endpoints.
 
 ```bash
-python Step10_extract_list_source_from_lantern_csv.py \
-  --input_file local_data/lantern_csv/fhir_endpoints.csv \
-  --output_file ../npd_ehr_scrape_cache/list_sources_summary.csv
+python go.py --steps 10
 ```
 
 **Output**: `list_sources_summary.csv` with distinct vendor list sources
 
-### Stage 2: Download Service Data
+### Stage 20: Download Service Data
 
 Downloads FHIR Bundle JSON files from EHR vendor endpoints.
 
 ```bash
-python Step20_download_list_source_json.py \
-  --input_file ../npd_ehr_scrape_cache/list_sources_summary.csv \
-  --output_dir ../npd_ehr_scrape_cache/cache/fhir_json_cache/ \
-  --delay 1.0
+python go.py --steps 20
 ```
 
 **Output**: JSON files organized by vendor in cache directory
 
-### Stage 3: Parse FHIR Bundles
+### Stage 30: Parse FHIR Bundles
 
 Breaks down large FHIR bundles into individual resource files.
 
 ```bash
-python Step30_parse_source_bundle.py \
-  --input_dir ../npd_ehr_scrape_cache/cache/fhir_json_cache/
+python go.py --steps 30
 ```
 
 **Output**: Individual JSON files for each FHIR resource (Organization, Endpoint, etc.)
 
-### Stage 4: Process & Normalize (New Parser)
+### Stage 40: Extract CSV Data (Legacy)
 
-Processes FHIR cache data into PostgreSQL-ready CSV files with NPI validation.
+Legacy CSV extraction from FHIR JSON files.
 
 ```bash
-# Full processing
-python -m parser.cli \
-  --cache-dir ../npd_ehr_scrape_cache/cache/fhir_json_cache/ \
-  --output-dir ./parser_output
+python go.py --steps 40
+```
 
-# Test mode (first 100 files per vendor)
-python -m parser.cli \
-  --cache-dir ../npd_ehr_scrape_cache/cache/fhir_json_cache/ \
-  --output-dir ./parser_output \
-  --test
+**Output**: Basic CSV files from FHIR resources
+
+### Stage 45: Process & Normalize (Modern Parser)
+
+Processes FHIR cache data into PostgreSQL-ready CSV files with NPI validation using parallel processing.
+
+```bash
+# Full processing with parallel workers
+python go.py --steps 45
+
+# Test mode (limited data)
+TEST_MODE=true python go.py --steps 45
 
 # Verbose mode
-python -m parser.cli \
-  --cache-dir ../npd_ehr_scrape_cache/cache/fhir_json_cache/ \
-  --output-dir ./parser_output \
-  --verbose
+VERBOSE_MODE=true python go.py --steps 45
 ```
 
 **Output**: CSV files ready for PostgreSQL import (see [Output Files](#output-files) below)
 
-### Skipping Stages
+### Stage 50: Clean Output Data
+
+Validates URLs and NPIs from stage 40 output.
+
+```bash
+python go.py --steps 50
+```
+
+**Output**: Cleaned NPI to Organization FHIR URL mappings
+
+### Stage 60: Calculate Open Endpoints
+
+Discovers FHIR endpoint capabilities (metadata, SMART config, OpenAPI, Swagger).
+
+```bash
+python go.py --steps 60
+```
+
+**Output**: Enriched endpoints with capability information
+
+### Stages 89-90: Dashboard Generation
+
+Generates CEHRT compliance dashboards.
+
+```bash
+# Generate dashboard CSV
+python go.py --steps 89
+
+# Generate dashboard Markdown report
+python go.py --steps 90
+
+# Generate both
+python go.py --steps 89 90
+```
+
+**Output**: CEHRT compliance reports in CSV and Markdown formats
+
+### Running Stage Sequences
 
 If you already have data from previous runs, you can start at any stage:
 
 ```bash
-# Skip stages 1-2 if you already have the cache
-# Just run stages 3-4
-python Step30_parse_source_bundle.py --input_dir ../npd_ehr_scrape_cache/cache/fhir_json_cache/
-python -m parser.cli --cache-dir ../npd_ehr_scrape_cache/cache/fhir_json_cache/ --output-dir ./parser_output
+# Skip download stages, start from parsing
+python go.py --steps 30-45
 
-# Skip all download/parsing if cache is already parsed
-# Just run stage 4 (processing)
-python -m parser.cli --cache-dir ../npd_ehr_scrape_cache/cache/fhir_json_cache/ --output-dir ./parser_output
+# Just reprocess data (skip download and parsing)
+python go.py --steps 45
+
+# Legacy pipeline stages
+python go.py --steps 40 50 60
+
+# Dashboard generation only
+python go.py --steps 89 90
 ```
 
 ## Output Files
@@ -197,32 +249,37 @@ python go.py
 ### Development & Testing
 
 ```bash
-# Process just 100 files per vendor
+# Process just 100 files per vendor (test mode)
 TEST_MODE=true python go.py
 
-# Or run parser directly in test mode
-python -m parser.cli --cache-dir ./test_cache --output-dir ./test_output --test
+# Test just the parser stage
+TEST_MODE=true python go.py --steps 45
+
+# Verbose output for debugging
+VERBOSE_MODE=true python go.py --steps 45
 ```
 
 ### Reprocess Existing Cache
 
 ```bash
-# Skip download steps, just reprocess
-python -m parser.cli \
-  --cache-dir ../npd_ehr_scrape_cache/cache/fhir_json_cache/ \
-  --output-dir ./parser_output
+# Skip download and parsing steps, just reprocess with modern parser
+python go.py --steps 45
+
+# Or reprocess with legacy pipeline and enrichment
+python go.py --steps 40 50 60
 ```
 
 ### Update Only New Data
 
 ```bash
-# Download new data (stages 1-2)
-python Step10_extract_list_source_from_lantern_csv.py --input_file local_data/lantern_csv/fhir_endpoints.csv --output_file ../npd_ehr_scrape_cache/list_sources_summary.csv
-python Step20_download_list_source_json.py --input_file ../npd_ehr_scrape_cache/list_sources_summary.csv --output_dir ../npd_ehr_scrape_cache/cache/fhir_json_cache/
+# Download new data from Lantern (stages 10-20)
+python go.py --steps 10 20
 
-# Parse and process (stages 3-4)
-python Step30_parse_source_bundle.py --input_dir ../npd_ehr_scrape_cache/cache/fhir_json_cache/
-python -m parser.cli --cache-dir ../npd_ehr_scrape_cache/cache/fhir_json_cache/ --output-dir ./parser_output
+# Parse and process new data (stages 30-45)
+python go.py --steps 30 45
+
+# Or run the complete update pipeline
+python go.py --steps 10-45
 ```
 
 ## Data Validation
