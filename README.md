@@ -1,166 +1,315 @@
-# CEHRT FHIR Cache Parser
+# EHR FHIR Entity Slurp
 
-This project processes cached CEHRT FHIR JSON resources into normalized CSV files for endpoint analysis and PostgreSQL import.
+A data processing pipeline for extracting and normalizing EHR FHIR endpoint data from healthcare providers. Processes data from the [Lantern Dashboard](https://lantern.healthit.gov/) to generate PostgreSQL-ready datasets for healthcare interoperability analysis.
 
-The parser assumes FHIR JSON data is already available in a cache directory. Cache acquisition and legacy step-based processing have been removed from this codebase.
-
-## Problem Documentation
-
-- [Understanding Endpoints in SaaS vs on-prem EHR instances](./docs/fhir_tenancy_explained.md)
-
-## Input Layout
-
-The parser expects vendor directories with `organization/` and `endpoint/` subdirectories:
-
-```text
-cache_root/
-  vendor_name/
-    organization/
-      entry_Organization_001.json
-    endpoint/
-      entry_Endpoint_001.json
-```
-
-Each JSON file should be a FHIR Bundle entry with a top-level `fullUrl` and nested `resource`.
+**Project Home**: [/DSACMS/npd_ehr_fhir_npi_slurp](https://github.com/DSACMS/npd_ehr_fhir_npi_slurp)  
+**Cache Repository**: [npd_ehr_scrape_cache](https://github.com/ftrotter-gov/npd_ehr_scrape_cache)
 
 ## Quick Start
 
-Create and activate a virtual environment, then install the package with test dependencies:
+### Prerequisites
+
+* Python 3.8+
+* Virtual environment (recommended)
+
+### Installation
 
 ```bash
-python -m venv .venv
-source .venv/bin/activate
-python -m pip install -e ".[test]"
+# Clone the repository
+git clone https://github.com/DSACMS/npd_ehr_fhir_npi_slurp
+cd npd_ehr_fhir_npi_slurp
+
+# Set up virtual environment
+source source_me_to_get_venv.sh
+
+# Install dependencies
+pip install -r requirements.txt
 ```
 
-Process a FHIR cache:
+### Running the Complete Pipeline
+
+Download the FHIR endpoints CSV from the [Lantern Dashboard downloads page](https://lantern.healthit.gov/?tab=downloads_tab) and place it in `local_data/prod_data/fhir_endpoints.csv`, then:
 
 ```bash
-python -m cehrt_fhir_parser.cli \
-  --cache-dir ../npd_slurp_cehrt_clientfhir_cache/cache/fhir_json_cache \
-  --output-dir ./csv_output
+# Run all steps from beginning to end
+python go.py
+
+# Run in test mode (processes limited data)
+TEST_MODE=true python go.py
+
+# Run with verbose output
+VERBOSE_MODE=true python go.py
 ```
 
-Run a limited development pass:
+## Pipeline Stages
+
+The pipeline consists of 4 main stages. You can run the complete pipeline with `go.py` or start at any stage by running individual steps:
+
+### Stage 1: Extract List Sources
+
+Analyzes Lantern CSV data to identify unique EHR vendor endpoints.
 
 ```bash
-python -m cehrt_fhir_parser.cli \
-  --cache-dir ../npd_slurp_cehrt_clientfhir_cache/cache/fhir_json_cache \
-  --output-dir ./csv_output \
-  --test \
+python Step10_extract_list_source_from_lantern_csv.py \
+  --input_file local_data/lantern_csv/fhir_endpoints.csv \
+  --output_file ../npd_ehr_scrape_cache/list_sources_summary.csv
+```
+
+**Output**: `list_sources_summary.csv` with distinct vendor list sources
+
+### Stage 2: Download Service Data
+
+Downloads FHIR Bundle JSON files from EHR vendor endpoints.
+
+```bash
+python Step20_download_list_source_json.py \
+  --input_file ../npd_ehr_scrape_cache/list_sources_summary.csv \
+  --output_dir ../npd_ehr_scrape_cache/cache/fhir_json_cache/ \
+  --delay 1.0
+```
+
+**Output**: JSON files organized by vendor in cache directory
+
+### Stage 3: Parse FHIR Bundles
+
+Breaks down large FHIR bundles into individual resource files.
+
+```bash
+python Step30_parse_source_bundle.py \
+  --input_dir ../npd_ehr_scrape_cache/cache/fhir_json_cache/
+```
+
+**Output**: Individual JSON files for each FHIR resource (Organization, Endpoint, etc.)
+
+### Stage 4: Process & Normalize (New Parser)
+
+Processes FHIR cache data into PostgreSQL-ready CSV files with NPI validation.
+
+```bash
+# Full processing
+python -m parser.cli \
+  --cache-dir ../npd_ehr_scrape_cache/cache/fhir_json_cache/ \
+  --output-dir ./parser_output
+
+# Test mode (first 100 files per vendor)
+python -m parser.cli \
+  --cache-dir ../npd_ehr_scrape_cache/cache/fhir_json_cache/ \
+  --output-dir ./parser_output \
+  --test
+
+# Verbose mode
+python -m parser.cli \
+  --cache-dir ../npd_ehr_scrape_cache/cache/fhir_json_cache/ \
+  --output-dir ./parser_output \
   --verbose
 ```
 
-Run in parallel and merge outputs:
+**Output**: CSV files ready for PostgreSQL import (see [Output Files](#output-files) below)
+
+### Skipping Stages
+
+If you already have data from previous runs, you can start at any stage:
 
 ```bash
-python -m cehrt_fhir_parser.cli \
-  --cache-dir ../npd_slurp_cehrt_clientfhir_cache/cache/fhir_json_cache \
-  --output-dir ./csv_output \
-  --parallel
+# Skip stages 1-2 if you already have the cache
+# Just run stages 3-4
+python Step30_parse_source_bundle.py --input_dir ../npd_ehr_scrape_cache/cache/fhir_json_cache/
+python -m parser.cli --cache-dir ../npd_ehr_scrape_cache/cache/fhir_json_cache/ --output-dir ./parser_output
 
-python -m cehrt_fhir_parser.merge_parallel_outputs --output-dir ./csv_output
+# Skip all download/parsing if cache is already parsed
+# Just run stage 4 (processing)
+python -m parser.cli --cache-dir ../npd_ehr_scrape_cache/cache/fhir_json_cache/ --output-dir ./parser_output
 ```
 
 ## Output Files
 
-The parser emits CSV files only for tables that have data.
+The pipeline generates two sets of CSV files:
 
-### FHIR Analysis Tables
+### NPD Schema Files (PostgreSQL Ready)
 
-- `ehr_vendor.csv`
-- `organization.csv`
-- `endpoint_instance.csv`
-- `endpoint_instance_to_other_id.csv`
-- `endpoint_instance_to_payload.csv`
-- `endpoint_connection_type.csv`
-- `environment_type.csv`
-- `data_lineage.csv`
-- `field_coverage_log.csv`
-- `fhir_organization_address.csv`
-- `fhir_organization_phone.csv`
-- `fhir_organization_email.csv`
-- `fhir_organization_contact_url.csv`
+These files match the `full_npd.sql` schema and are ready for database import:
 
-### NPD-Oriented Tables
+* **`npd_endpoint_instance.csv`** - Clean endpoint data with all fields
+* **`npd_endpoint_instance_to_other_id.csv`** - NPI relationships with validation results
+* **`npd_endpoint_instance_to_payload.csv`** - Payload type mappings
 
-- `npd_endpoint_instance.csv`
-- `npd_endpoint_instance_to_other_id.csv`
-- `npd_endpoint_instance_to_payload.csv`
-- `npd_organization_to_address.csv`
-- `npd_organization_to_phone.csv`
-- `npd_address.csv`
-- `npd_address_us.csv`
-- `npd_address_international.csv`
-- `npd_address_nonstandard.csv`
-- `npd_fhir_address_use.csv`
-- `npd_fhir_email_use.csv`
-- `npd_fhir_phone_use.csv`
+### FHIR Analysis Files (Debugging & Research)
 
-Each run also writes a JSON processing report with resource counts, table statistics, field coverage, and error counts.
+Additional files for data analysis and debugging:
 
-## Validation
+* **`organization.csv`** - FHIR Organization resources with metadata
+* **`endpoint_instance.csv`** - FHIR Endpoint resources with validation
+* **`ehr_vendor.csv`** - EHR vendor information
+* **`data_lineage.csv`** - Complete traceability records
+* **`field_coverage_log.csv`** - Data processing coverage analysis
+* **`processing_report_[timestamp].json`** - Detailed processing statistics
 
-NPI validation is handled by `cehrt_fhir_parser.utils.npi_validator.NPIValidator`.
+### Importing to PostgreSQL
 
-The validator loads all files matching `valid_npi.*.csv` from `./npi_validation_data/` by default. Cache files must use this format:
+```bash
+# Create schema
+psql -d your_database -f data_model/full_npd.sql
 
-```csv
-npi,is_valid
-1234567890,1
-1111111111,0
+# Import CSV files
+psql -d your_database -c "\COPY npd_endpoint_instance FROM 'parser_output/npd_endpoint_instance.csv' CSV HEADER"
+psql -d your_database -c "\COPY npd_endpoint_instance_to_other_id FROM 'parser_output/npd_endpoint_instance_to_other_id.csv' CSV HEADER"
+psql -d your_database -c "\COPY npd_endpoint_instance_to_payload FROM 'parser_output/npd_endpoint_instance_to_payload.csv' CSV HEADER"
 ```
 
-If no cache is available, the parser continues with format-only NPI validation. Tests use fixture cache files and do not call the public NPI API.
+## Key Features
 
-Phone numbers are parsed and normalized with `phonenumbers`. URLs and email addresses use local format validation.
+* **NPI Validation**: Real-time validation with 9M+ cached NPIs, falls back to CMS NPI Registry API
+* **Data Deduplication**: Hash-based deduplication using UUID5 for consistent IDs
+* **Field Coverage Tracking**: Comprehensive analysis of data completeness
+* **Error Handling**: Detailed error tracking and reporting
+* **Test Mode**: Process limited data for development and validation
+* **Progress Tracking**: Visual progress indicators for long-running operations
+
+## Configuration
+
+Create or edit `data_files.env` to customize paths:
+
+```bash
+# Input/Output Paths
+LANTERN_CSV_INPUT=local_data/lantern_csv/fhir_endpoints.csv
+LIST_SOURCES_SUMMARY=../npd_ehr_scrape_cache/list_sources_summary.csv
+CEHRT_CACHE_DIR=../npd_ehr_scrape_cache/cache/fhir_json_cache/
+SERVICE_JSON_DIR=../npd_ehr_scrape_cache/cache/fhir_json_cache/
+PARSER_OUTPUT_DIR=./parser_output
+
+# Performance Tuning
+DOWNLOAD_DELAY=1.0  # Seconds between downloads
+FHIR_REQUEST_TIMEOUT=30  # API request timeout
+
+# Processing Options
+TEST_MODE=false  # Set to true for limited processing
+VERBOSE_MODE=false  # Set to true for detailed output
+```
+
+## Common Use Cases
+
+### Full Production Run
+
+```bash
+python go.py
+```
+
+### Development & Testing
+
+```bash
+# Process just 100 files per vendor
+TEST_MODE=true python go.py
+
+# Or run parser directly in test mode
+python -m parser.cli --cache-dir ./test_cache --output-dir ./test_output --test
+```
+
+### Reprocess Existing Cache
+
+```bash
+# Skip download steps, just reprocess
+python -m parser.cli \
+  --cache-dir ../npd_ehr_scrape_cache/cache/fhir_json_cache/ \
+  --output-dir ./parser_output
+```
+
+### Update Only New Data
+
+```bash
+# Download new data (stages 1-2)
+python Step10_extract_list_source_from_lantern_csv.py --input_file local_data/lantern_csv/fhir_endpoints.csv --output_file ../npd_ehr_scrape_cache/list_sources_summary.csv
+python Step20_download_list_source_json.py --input_file ../npd_ehr_scrape_cache/list_sources_summary.csv --output_dir ../npd_ehr_scrape_cache/cache/fhir_json_cache/
+
+# Parse and process (stages 3-4)
+python Step30_parse_source_bundle.py --input_dir ../npd_ehr_scrape_cache/cache/fhir_json_cache/
+python -m parser.cli --cache-dir ../npd_ehr_scrape_cache/cache/fhir_json_cache/ --output-dir ./parser_output
+```
+
+## Data Validation
+
+### NPI Validation
+* Format validation (10-digit requirement)
+* API validation against CMS NPI Registry
+* Cache-based validation using 9M+ pre-validated NPIs (see [NPIValidator_README.md](NPIValidator_README.md))
+
+### Data Quality Requirements
+Organizations must have:
+* At least one valid NPI identifier
+* At least one FHIR endpoint
+* Valid organizational name
+
+## Troubleshooting
+
+### Virtual Environment Issues
+
+```bash
+source source_me_to_get_venv.sh
+```
+
+### Missing Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### Low Success Rate Warning
+
+If you see "WARNING: Low success rate", check:
+* Processing report JSON for detailed error logs
+* Network connectivity to FHIR endpoints
+* Input data quality in Lantern CSV
+
+### NPI Cache Errors
+
+The NPI validator now uses `atexit` for reliable cache saving. No action needed - cache saves automatically on program exit without errors.
+
+## Documentation
+
+* **[NPIValidator_README.md](NPIValidator_README.md)** - NPI validation system details
+* **[docs/fhir_tenancy_explained.md](./docs/fhir_tenancy_explained.md)** - Understanding SAAS vs on-prem EHR endpoints
+* **[data_model/full_npd.sql](data_model/full_npd.sql)** - PostgreSQL database schema
 
 ## Development
 
-Run tests:
+### Running Tests
 
 ```bash
-python -m pytest -q
+pytest                    # Run all tests
+pytest --cov=.           # Run with coverage
+python test_parser.py    # Test parser specifically
 ```
 
-Useful verification after refactors:
+### Project Structure
 
-```bash
-python -m compileall cehrt_fhir_parser tests
-python -m pytest -q
-rg "Step10|Step20|Step30|Step40|Step50|Step60|Step89|Step90|FilenameUtils|FHIRResolver|go.py|slurp.py"
 ```
-
-## Project Layout
-
-```text
-cehrt_fhir_parser/
-  cli.py
-  processor.py
-  parallel_runner.py
-  merge_parallel_outputs.py
-  models/
-  output/
-  utils/
-tests/
-  fixtures are generated in pytest tmp paths
+├── Step10-Step90_*.py   # Pipeline stage scripts
+├── parser/              # New FHIR cache parser (recommended)
+│   ├── cli.py          # Command-line interface
+│   ├── processor.py    # Main processing logic
+│   └── output/         # CSV exporters
+├── go.py               # Complete pipeline runner
+├── NPIValidator.py     # NPI validation with caching
+├── data_model/         # PostgreSQL schema
+└── local_data/         # Input data directory
 ```
 
 ## Policies
 
 ### Open Source Policy
 
-We adhere to the [CMS Open Source Policy](https://github.com/CMSGov/cms-open-source-policy). If you have any questions, contact [opensource@cms.hhs.gov](mailto:opensource@cms.hhs.gov).
+We adhere to the [CMS Open Source Policy](https://github.com/CMSGov/cms-open-source-policy). Questions? Email [opensource@cms.hhs.gov](mailto:opensource@cms.hhs.gov).
 
-### Security and Responsible Disclosure Policy
+### Security and Responsible Disclosure
 
-Vulnerability reports can be submitted through [Bugcrowd](https://bugcrowd.com/cms-vdp). Reports may be submitted anonymously. If you share contact information, we will acknowledge receipt within 3 business days.
+Submit vulnerability reports through [Bugcrowd](https://bugcrowd.com/cms-vdp). Reports may be submitted anonymously.
 
-### Software Bill of Materials
+### Software Bill of Materials (SBOM)
 
-A Software Bill of Materials is a formal record containing the details and supply-chain relationships of components used in building software.
+SBOM available at: [Network Dependencies](https://github.com/DSACMS/npd_ehr_fhir_npi_slurp/network/dependencies)
 
-## Public Domain
+For more information about SBOMs: <https://www.cisa.gov/sbom>
+
+## License
 
 This project is in the public domain within the United States, and copyright and related rights in the work worldwide are waived through the [CC0 1.0 Universal public domain dedication](https://creativecommons.org/publicdomain/zero/1.0/) as indicated in [LICENSE](LICENSE).
 

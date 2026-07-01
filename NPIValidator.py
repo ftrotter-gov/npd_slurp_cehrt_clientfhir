@@ -14,10 +14,11 @@ The CSV file structure uses the header: npi,is_valid
 Where is_valid is 1 for valid NPIs and 0 for invalid NPIs.
 
 All cache files are loaded to build the full NPI validity cache. New validations
-are saved to /local_data/prod_data/valid_npi.3.csv every 20 API fallbacks.
-Any remaining unsaved NPIs are written when the program shuts down as a fallback.
+are saved to /local_data/prod_data/valid_npi.3.csv when the program shuts down, using the
+same fallback to API approach as before.
 """
 
+import atexit
 import csv
 import os
 import re
@@ -32,8 +33,7 @@ class NPIValidator:
     A class to validate NPI numbers with caching support.
     
     Loads existing validation results from CSV cache and validates new NPIs
-    against the CMS NPI Registry API. Updates cache with new results every 20
-    API fallbacks. Any remaining unsaved NPIs are written at shutdown.
+    against the CMS NPI Registry API. Updates cache with new results.
     """
     
     def __init__(self, *, cache_file_path: Optional[str] = None):
@@ -54,34 +54,22 @@ class NPIValidator:
         # Track NPIs that were added during this session (need to be saved)
         self.newly_validated_npis: Dict[str, bool] = {}
         
-        # Counter for API fallbacks - write to cache every 20 calls
-        self.api_fallback_count: int = 0
-        self.api_fallback_threshold: int = 20
-        
         # Load existing cache
         self._load_cache()
+        
+        # Register cleanup function to save cache on exit (more reliable than __del__)
+        atexit.register(self._save_cache_safe)
     
     def _load_cache(self):
         """Load existing NPI validation results from all CSV cache files."""
-        # Find all cache files with pattern valid_npi.*.csv in the cache directory
-        cache_dir = self.cache_file_path.parent
-        
-        # Check if cache directory exists
-        if not cache_dir.exists():
-            raise FileNotFoundError(
-                f"Cache directory does not exist: {cache_dir}\n"
-                f"NPIValidator requires cache files to avoid slow API calls.\n"
-                f"Please ensure the cache directory and valid_npi.*.csv files exist."
-            )
-        
+        # Find all cache files with pattern /local_data/prod_data/valid_npi.*.csv
+        cache_dir = Path("./local_data/prod_data")
         cache_files = list(cache_dir.glob("valid_npi.*.csv"))
         
         if not cache_files:
-            raise FileNotFoundError(
-                f"No cache files found with pattern valid_npi.*.csv in {cache_dir}\n"
-                f"NPIValidator requires cache files to avoid slow API calls.\n"
-                f"Please ensure valid_npi.*.csv files exist in the cache directory."
-            )
+            print("No cache files found with pattern valid_npi.*.csv")
+            print("Starting with empty cache.")
+            return
         
         total_loaded = 0
         
@@ -110,49 +98,44 @@ class NPIValidator:
         
         print(f"Total loaded: {total_loaded} NPIs from {len(cache_files)} cache files")
     
+    def _save_cache_safe(self):
+        """
+        Safe wrapper for saving cache - silently handles all errors.
+        Used by atexit to ensure no exceptions during Python shutdown.
+        """
+        try:
+            self._save_cache()
+        except:
+            # Silently ignore all errors during shutdown to prevent confusing error messages
+            pass
+    
     def _save_cache(self):
         """Save newly validated NPIs to the cache file."""
         if not self.newly_validated_npis:
             return  # No new data to save
         
-        try:
-            # Create directory if it doesn't exist
-            self.cache_file_path.parent.mkdir(parents=True, exist_ok=True)
+        # Create directory if it doesn't exist
+        self.cache_file_path.parent.mkdir(parents=True, exist_ok=True)
+        
+        # Check if file exists to determine if we need to write header
+        file_exists = self.cache_file_path.exists()
+        
+        # Append new data to the cache file
+        with open(self.cache_file_path, 'a', newline='', encoding='utf-8') as f:
+            fieldnames = ['npi', 'is_valid']
+            writer = csv.DictWriter(f, fieldnames=fieldnames)
             
-            # Check if file exists to determine if we need to write header
-            file_exists = self.cache_file_path.exists()
-
-            print(f"NPIValidator: Opening {self.cache_file_path} to save cache")
+            # Write header only if file is new/empty
+            if not file_exists:
+                writer.writeheader()
             
-            # Import open at function level to avoid destructor issues
-            import builtins
-            open_func = builtins.open
-            
-            # Append new data to the cache file
-            with open_func(self.cache_file_path, 'a', newline='', encoding='utf-8') as f:
-                print(f"NPIValidator: Successfully Opened: {self.cache_file_path} to save cache")
-                fieldnames = ['npi', 'is_valid']
-                writer = csv.DictWriter(f, fieldnames=fieldnames)
-                
-                # Write header only if file is new/empty
-                if not file_exists:
-                    writer.writeheader()
-                
-                # Write only the newly validated NPIs
-                for npi, is_valid in self.newly_validated_npis.items():
-                    is_valid_int = 1 if is_valid else 0
-                    writer.writerow({
-                        'npi': npi,
-                        'is_valid': is_valid_int
-                    })
-            
-            print(f"NPIValidator: Saved {len(self.newly_validated_npis)} new NPI validations to {self.cache_file_path}")
-            
-        except NameError as e:
-            print(f"NPIValidator: NameError saving cache file (open not available): {e}")
-            print("NPIValidator: Skipping cache save - validation data already processed successfully")
-        except Exception as e:
-            print(f"NPIValidator: Error saving cache file: {e}")
+            # Write only the newly validated NPIs
+            for npi, is_valid in self.newly_validated_npis.items():
+                is_valid_int = 1 if is_valid else 0
+                writer.writerow({
+                    'npi': npi,
+                    'is_valid': is_valid_int
+                })
     
     @staticmethod
     def _is_valid_npi_format(*, npi_value: str) -> bool:
@@ -265,8 +248,7 @@ class NPIValidator:
             return self.npi_cache[clean_npi]
         
         # Not in cache, validate via API
-        cache_size = len(self.npi_cache)
-        print(f"Fall back to validating NPI via API: {clean_npi} (Cache has {cache_size} NPIs loaded)")
+        print(f"Fall back to validating NPI via API: {clean_npi}")
         api_result = self._validate_npi_via_api(npi_value=clean_npi)
         
         # Extract validity from API result - ensure it's a boolean
@@ -276,25 +258,4 @@ class NPIValidator:
         self.npi_cache[clean_npi] = is_valid
         self.newly_validated_npis[clean_npi] = is_valid
         
-        # Increment API fallback counter
-        self.api_fallback_count += 1
-        
-        # Save cache every 20 API fallbacks
-        if self.api_fallback_count >= self.api_fallback_threshold:
-            print(f"NPIValidator: Reached {self.api_fallback_count} API fallbacks, writing cache...")
-            self._save_cache()
-            # Clear newly validated NPIs since they've been saved
-            self.newly_validated_npis.clear()
-            # Reset counter
-            self.api_fallback_count = 0
-        
         return is_valid
-    
-    def __del__(self):
-        """
-        Destructor that saves newly validated NPIs to cache file.
-        """
-        try:
-            self._save_cache()
-        except Exception as e:
-            print(f"Error in NPIValidator destructor: {e}")
