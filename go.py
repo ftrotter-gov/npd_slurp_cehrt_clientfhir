@@ -168,7 +168,7 @@ def parse_step_args(*, steps_arg):
         Set of step numbers to run
     """
     if not steps_arg:
-        return {10, 20, 30, 40, 45, 50, 52, 60, 89, 90}  # Default: all steps
+        return {10, 20, 30, 45, 52, 89, 90}  # Default: modern pipeline only
     
     steps_to_run = set()
     
@@ -180,7 +180,7 @@ def parse_step_args(*, steps_arg):
                 # For ranges, add all valid step numbers in between
                 start_num = int(start)
                 end_num = int(end)
-                valid_steps = [10, 20, 30, 40, 45, 50, 52, 60, 89, 90]
+                valid_steps = [10, 20, 30, 45, 52, 89, 90]
                 for step in valid_steps:
                     if start_num <= step <= end_num:
                         steps_to_run.add(step)
@@ -232,28 +232,6 @@ def run_step_30():
             "python", "Step30_parse_source_bundle.py",
             "--input_dir", get_env_var(key="SERVICE_JSON_DIR", default_value="../npd_slurp_cehrt_clientfhir_cache/cache/fhir_json_cache/")
         ]
-    )
-
-
-def run_step_40():
-    """Step 40: Extract CSV data from FHIR JSON files."""
-    input_dir = get_env_var(key="SERVICE_JSON_DIR", default_value="../npd_slurp_cehrt_clientfhir_cache/cache/fhir_json_cache/")
-    output_dir = get_env_var(key="NORMALIZED_CSV_DIR", default_value="../npd_slurp_cehrt_clientfhir_cache/cache/summary_data/")
-    
-    command_args = [
-        "python", "Step40_extract_csv_data.py",
-        "--input_dir", input_dir,
-        "--output_dir", output_dir
-    ]
-    
-    # Add test mode if requested
-    if os.environ.get("TEST_MODE", "").lower() in ["true", "1", "yes"]:
-        command_args.append("--test")
-    
-    run_step(
-        step_num=40,
-        description="Extracting CSV data from FHIR Organization JSON files",
-        command_args=command_args
     )
 
 
@@ -331,31 +309,6 @@ def run_step_45():
         sys.exit(1)
 
 
-def run_step_50():
-    """Step 50: Clean output data (LEGACY - kept for backward compatibility)."""
-    input_file = get_env_var(key="ORG_TO_NPI_RAW", default_value="../npd_slurp_cehrt_clientfhir_cache/cache/summary_data/step40_org_to_npi.csv")
-    output_file = get_env_var(key="CLEAN_NPI_TO_ORG_FHIR_URL", default_value="../npd_slurp_cehrt_clientfhir_cache/cache/summary_data/step50_clean_npi_to_org_fhir_url.csv")
-    
-    # Check prerequisite: Step 40 must have produced data
-    if not check_file_has_data(file_path=input_file, min_lines=2):
-        print(f"⚠️  Step 50: SKIPPED - Prerequisite data missing")
-        print(f"   Required: {input_file} (with data)")
-        print(f"   Reason: Step 40 produced no valid organizations")
-        print(f"   Note: Organizations need both a valid NPI and FHIR endpoint")
-        print("")
-        return
-    
-    run_step(
-        step_num=50,
-        description="Cleaning org_to_npi CSV data (validating URLs and NPIs)",
-        command_args=[
-            "python", "Step50_simple_clean_output.py",
-            "--input_file", input_file,
-            "--output_file", output_file
-        ]
-    )
-
-
 def run_step_52():
     """Step 52: Discover endpoints from Step 45 output (MODERN)."""
     input_dir = get_env_var(key="V2_PARSER_CSV_DIR", default_value="./parser_output")
@@ -382,51 +335,17 @@ def run_step_52():
     )
 
 
-def run_step_60():
-    """Step 60: Calculate open endpoints."""
-    input_csv = get_env_var(key="CLEAN_NPI_TO_ORG_FHIR_URL", default_value="../npd_slurp_cehrt_clientfhir_cache/cache/summary_data/step50_clean_npi_to_org_fhir_url.csv")
-    output_csv = get_env_var(key="ENRICHED_ENDPOINTS", default_value="../npd_slurp_cehrt_clientfhir_cache/cache/summary_data/step60_enriched_endpoints.csv")
-    
-    # Check prerequisite: Step 50 must have produced data
-    if not check_file_has_data(file_path=input_csv, min_lines=2):
-        print(f"⚠️  Step 60: SKIPPED - Prerequisite data missing")
-        print(f"   Required: {input_csv} (with data)")
-        print(f"   Reason: Step 50 produced no clean NPI mappings")
-        print(f"   Note: Run Steps 40 and 50 first with valid data")
-        print("")
-        return
-    
-    run_step(
-        step_num=60,
-        description="Discovering FHIR endpoints (metadata, SMART config, OpenAPI, Swagger)",
-        command_args=[
-            "python", "Step60_CalculateOpenEndpoints.py",
-            "--input_csv_file", input_csv,
-            "--output_csv_file", output_csv
-        ]
-    )
-
-
 def run_step_89():
     """Step 89: Generate CEHRT Dashboard CSV."""
     list_sources_path = get_env_var(key="LIST_SOURCES_SUMMARY", default_value="../npd_slurp_cehrt_clientfhir_cache/list_sources_summary.csv")
+    enriched_endpoints_path = get_env_var(key="ENRICHED_ENDPOINTS", default_value="../npd_slurp_cehrt_clientfhir_cache/cache/summary_data/step52_enriched_endpoints.csv")
     
-    # Try Step 52 output first (modern pipeline), then fall back to Step 60 (legacy)
-    step52_enriched = get_env_var(key="ENRICHED_ENDPOINTS", default_value="../npd_slurp_cehrt_clientfhir_cache/cache/summary_data/step52_enriched_endpoints.csv")
-    step60_enriched = "../npd_slurp_cehrt_clientfhir_cache/cache/summary_data/step60_enriched_endpoints.csv"
-    
-    # Determine which enriched endpoints file to use
-    if check_file_has_data(file_path=step52_enriched, min_lines=2):
-        enriched_endpoints_path = step52_enriched
-        print("Using Step 52 (modern) enriched endpoints")
-    elif check_file_has_data(file_path=step60_enriched, min_lines=2):
-        enriched_endpoints_path = step60_enriched
-        print("Using Step 60 (legacy) enriched endpoints")
-    else:
+    # Check prerequisite: Step 52 must have produced data
+    if not check_file_has_data(file_path=enriched_endpoints_path, min_lines=2):
         print(f"⚠️  Step 89: SKIPPED - Prerequisite data missing")
-        print(f"   Required: {step52_enriched} OR {step60_enriched} (with data)")
-        print(f"   Reason: Neither Step 52 nor Step 60 has produced enriched endpoints")
-        print(f"   Note: Run either Step 52 (modern) or Steps 40/50/60 (legacy) first")
+        print(f"   Required: {enriched_endpoints_path} (with data)")
+        print(f"   Reason: Step 52 hasn't produced enriched endpoints")
+        print(f"   Note: Run Step 52 first with valid data")
         print("")
         return
     
@@ -482,25 +401,20 @@ def main():
 Examples:
   python go.py                       # Run all steps (10-90)
   python go.py --steps 10 20         # Run steps 10 and 20
-  python go.py --steps 10-30         # Run steps 10 through 30
-  python go.py --steps 40            # Run only step 40
-  python go.py --steps 10 30 40      # Run steps 10, 30, and 40
+  python go.py --steps 10-52         # Run steps 10 through 52
+  python go.py --steps 45            # Run only step 45
   python go.py --steps 89 90         # Run dashboard generation only
   
 Steps:
   10 - Extract list sources from Lantern CSV
   20 - Download CEHRT JSON files
   30 - Parse FHIR bundles into individual resource files
-  40 - Extract CSV data from FHIR JSON files (legacy)
-  45 - Process FHIR cache with cehrt_fhir_parser (modern OOP implementation)
-  50 - Clean output data (legacy - validate URLs and NPIs)
-  52 - Discover endpoints from Step 45 output (MODERN - replaces 40/50/60)
-  60 - Calculate open endpoints (legacy - discover metadata, SMART, OpenAPI, Swagger)
+  45 - Process FHIR cache with modern parser (NPI validation, parallel processing)
+  52 - Discover FHIR endpoints (metadata, SMART, OpenAPI, Swagger)
   89 - Generate CEHRT Dashboard CSV
   90 - Make CEHRT Dashboard Markdown report
   
-Modern Pipeline: 10 → 20 → 30 → 45 → 52 → 89 → 90
-Legacy Pipeline: 10 → 20 → 30 → 40 → 50 → 60 → 89 → 90
+Pipeline: 10 → 20 → 30 → 45 → 52 → 89 → 90
         """
     )
     
@@ -508,7 +422,7 @@ Legacy Pipeline: 10 → 20 → 30 → 40 → 50 → 60 → 89 → 90
         '--steps',
         nargs='*',
         metavar='STEP',
-        help='Specify which steps to run (10, 20, 30, 40, 45, 50, 60, 89, 90). Can specify individual steps (10 20 30) or ranges (10-60). Default: all steps'
+        help='Specify which steps to run (10, 20, 30, 45, 52, 89, 90). Can specify individual steps (10 20 30) or ranges (10-52). Default: all steps'
     )
     
     args = parser.parse_args()
@@ -532,11 +446,8 @@ Legacy Pipeline: 10 → 20 → 30 → 40 → 50 → 60 → 89 → 90
         10: run_step_10,
         20: run_step_20,
         30: run_step_30,
-        40: run_step_40,
         45: run_step_45,
-        50: run_step_50,
         52: run_step_52,
-        60: run_step_60,
         89: run_step_89,
         90: run_step_90
     }
@@ -550,9 +461,9 @@ Legacy Pipeline: 10 → 20 → 30 → 40 → 50 → 60 → 89 → 90
     # Run steps in order
     for step_num in sorted(steps_to_run):
         if step_num in step_functions:
-            if step_num == 40:
-                print("\nPHASE 2: CSV EXTRACTION & NORMALIZATION")
-                print("Extracting normalized CSV data from FHIR JSON files")
+            if step_num == 45:
+                print("\nPHASE 2: DATA PROCESSING")
+                print("Processing FHIR data with modern parser")
                 print("")
             elif step_num == 89:
                 print("\nPHASE 3: DASHBOARD GENERATION")
@@ -573,19 +484,6 @@ Legacy Pipeline: 10 → 20 → 30 → 40 → 50 → 60 → 89 → 90
         output_md = get_env_var(key="CEHRT_FHIR_REPORT_MD", default_value="../npd_slurp_cehrt_clientfhir_cache/cache/summary_data/step90_CEHRT_FHIR_Report.md")
         print("Dashboard Generation Complete:")
         print(f"  - View dashboard: {output_md}")
-        print("")
-    
-    if any(step in steps_to_run for step in [40, 50, 60]):
-        print("Data Processing Complete:")
-        if 40 in steps_to_run:
-            normalized_csv_dir = get_env_var(key="NORMALIZED_CSV_DIR", default_value="../npd_slurp_cehrt_clientfhir_cache/cache/summary_data")
-            print(f"  - Normalized CSV files: {normalized_csv_dir}/")
-        if 50 in steps_to_run:
-            clean_csv = get_env_var(key="CLEAN_NPI_TO_ORG_FHIR_URL", default_value="../npd_slurp_cehrt_clientfhir_cache/cache/summary_data/step50_clean_npi_to_org_fhir_url.csv")
-            print(f"  - Clean NPI to Org mapping: {clean_csv}")
-        if 60 in steps_to_run:
-            enriched_csv = get_env_var(key="ENRICHED_ENDPOINTS", default_value="../npd_slurp_cehrt_clientfhir_cache/cache/summary_data/step60_enriched_endpoints.csv")
-            print(f"  - Enriched endpoints: {enriched_csv}")
         print("")
     
 
