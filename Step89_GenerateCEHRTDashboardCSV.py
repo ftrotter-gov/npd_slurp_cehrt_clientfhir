@@ -94,18 +94,45 @@ def check_endpoint_found(row, col):
     return row.get(col, "").startswith("http")
 
 def aggregate_vendor_compliance(enriched_path, org_to_npi_path, vendor_map):
-    # 1. Parse org_to_npi.csv and collect per-vendor org info
+    # 1. Parse org_to_npi data
+    # If org_to_npi_path doesn't exist or is empty, extract from enriched_endpoints
     org_to_npi = {}
-    with open(org_to_npi_path, newline='', encoding='utf-8') as f:
-        reader = csv.DictReader(f)
-        for row in reader:
-            org_id = row.get("org_id", "").strip()
-            npi_value = row.get("npi_value", "").strip()
-            base = get_base_domain(org_id)
-            vendor = vendor_map.get(base, "Unknown, missing from list_sources_summary.csv")
-            if vendor not in org_to_npi:
-                org_to_npi[vendor] = []
-            org_to_npi[vendor].append((org_id, npi_value))
+    
+    use_enriched_for_npi = False
+    if not org_to_npi_path or not os.path.exists(org_to_npi_path):
+        print("Note: org_to_npi.csv not found, will extract NPI data from enriched_endpoints.csv")
+        use_enriched_for_npi = True
+    else:
+        # Try to read legacy org_to_npi.csv
+        try:
+            with open(org_to_npi_path, newline='', encoding='utf-8') as f:
+                reader = csv.DictReader(f)
+                for row in reader:
+                    org_id = row.get("org_id", "").strip()
+                    npi_value = row.get("npi_value", "").strip()
+                    base = get_base_domain(org_id)
+                    vendor = vendor_map.get(base, "Unknown, missing from list_sources_summary.csv")
+                    if vendor not in org_to_npi:
+                        org_to_npi[vendor] = []
+                    org_to_npi[vendor].append((org_id, npi_value))
+        except Exception as e:
+            print(f"Warning: Could not read org_to_npi.csv: {e}")
+            print("Will extract NPI data from enriched_endpoints.csv instead")
+            use_enriched_for_npi = True
+    
+    # If we need to extract from enriched_endpoints, do it now
+    if use_enriched_for_npi:
+        with open(enriched_path, newline='', encoding='utf-8') as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                org_url = row.get("org_fhir_url", "").strip()
+                npi = row.get("npi", "").strip()
+                if org_url:  # Only process if we have a URL
+                    base = get_base_domain(org_url)
+                    vendor = vendor_map.get(base, "Unknown, missing from list_sources_summary.csv")
+                    if vendor not in org_to_npi:
+                        org_to_npi[vendor] = []
+                    org_to_npi[vendor].append((org_url, npi))
 
     # 2. Parse enriched_endpoints.csv
     org_in_enriched = {}

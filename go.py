@@ -168,7 +168,7 @@ def parse_step_args(*, steps_arg):
         Set of step numbers to run
     """
     if not steps_arg:
-        return {10, 20, 30, 40, 45, 50, 60, 89, 90}  # Default: all steps
+        return {10, 20, 30, 40, 45, 50, 52, 60, 89, 90}  # Default: all steps
     
     steps_to_run = set()
     
@@ -180,7 +180,7 @@ def parse_step_args(*, steps_arg):
                 # For ranges, add all valid step numbers in between
                 start_num = int(start)
                 end_num = int(end)
-                valid_steps = [10, 20, 30, 40, 45, 50, 60, 89, 90]
+                valid_steps = [10, 20, 30, 40, 45, 50, 52, 60, 89, 90]
                 for step in valid_steps:
                     if start_num <= step <= end_num:
                         steps_to_run.add(step)
@@ -332,7 +332,7 @@ def run_step_45():
 
 
 def run_step_50():
-    """Step 50: Clean output data."""
+    """Step 50: Clean output data (LEGACY - kept for backward compatibility)."""
     input_file = get_env_var(key="ORG_TO_NPI_RAW", default_value="../npd_slurp_cehrt_clientfhir_cache/cache/summary_data/step40_org_to_npi.csv")
     output_file = get_env_var(key="CLEAN_NPI_TO_ORG_FHIR_URL", default_value="../npd_slurp_cehrt_clientfhir_cache/cache/summary_data/step50_clean_npi_to_org_fhir_url.csv")
     
@@ -351,6 +351,32 @@ def run_step_50():
         command_args=[
             "python", "Step50_simple_clean_output.py",
             "--input_file", input_file,
+            "--output_file", output_file
+        ]
+    )
+
+
+def run_step_52():
+    """Step 52: Discover endpoints from Step 45 output (MODERN)."""
+    input_dir = get_env_var(key="V2_PARSER_CSV_DIR", default_value="./parser_output")
+    output_file = get_env_var(key="ENRICHED_ENDPOINTS", default_value="../npd_slurp_cehrt_clientfhir_cache/cache/summary_data/step52_enriched_endpoints.csv")
+    
+    # Check prerequisite: Step 45 must have produced endpoint_instance.csv
+    endpoint_file = Path(input_dir) / 'endpoint_instance.csv'
+    if not endpoint_file.exists() or not check_file_has_data(file_path=str(endpoint_file), min_lines=2):
+        print(f"⚠️  Step 52: SKIPPED - Prerequisite data missing")
+        print(f"   Required: {endpoint_file} (with data)")
+        print(f"   Reason: Step 45 hasn't produced endpoint data")
+        print(f"   Note: Run Step 45 first with valid data")
+        print("")
+        return
+    
+    run_step(
+        step_num=52,
+        description="Discovering FHIR endpoints from Step 45 output (metadata, SMART, OpenAPI, Swagger)",
+        command_args=[
+            "python", "Step52_DiscoverEndpoints.py",
+            "--input_dir", input_dir,
             "--output_file", output_file
         ]
     )
@@ -384,18 +410,29 @@ def run_step_60():
 def run_step_89():
     """Step 89: Generate CEHRT Dashboard CSV."""
     list_sources_path = get_env_var(key="LIST_SOURCES_SUMMARY", default_value="../npd_slurp_cehrt_clientfhir_cache/list_sources_summary.csv")
-    enriched_endpoints_path = get_env_var(key="ENRICHED_ENDPOINTS", default_value="../npd_slurp_cehrt_clientfhir_cache/cache/summary_data/step60_enriched_endpoints.csv")
-    org_to_npi_path = get_env_var(key="ORG_TO_NPI_RAW", default_value="../npd_slurp_cehrt_clientfhir_cache/cache/summary_data/step40_org_to_npi.csv")
-    output_csv_path = get_env_var(key="CEHRT_FHIR_REPORT_CSV", default_value="../npd_slurp_cehrt_clientfhir_cache/cache/summary_data/step89_CEHRT_FHIR_Report.csv")
     
-    # Check prerequisites: Step 60 must have produced data
-    if not check_file_has_data(file_path=enriched_endpoints_path, min_lines=2):
+    # Try Step 52 output first (modern pipeline), then fall back to Step 60 (legacy)
+    step52_enriched = get_env_var(key="ENRICHED_ENDPOINTS", default_value="../npd_slurp_cehrt_clientfhir_cache/cache/summary_data/step52_enriched_endpoints.csv")
+    step60_enriched = "../npd_slurp_cehrt_clientfhir_cache/cache/summary_data/step60_enriched_endpoints.csv"
+    
+    # Determine which enriched endpoints file to use
+    if check_file_has_data(file_path=step52_enriched, min_lines=2):
+        enriched_endpoints_path = step52_enriched
+        print("Using Step 52 (modern) enriched endpoints")
+    elif check_file_has_data(file_path=step60_enriched, min_lines=2):
+        enriched_endpoints_path = step60_enriched
+        print("Using Step 60 (legacy) enriched endpoints")
+    else:
         print(f"⚠️  Step 89: SKIPPED - Prerequisite data missing")
-        print(f"   Required: {enriched_endpoints_path} (with data)")
-        print(f"   Reason: Step 60 hasn't produced enriched endpoints")
-        print(f"   Note: Run Steps 40, 50, and 60 first with valid data")
+        print(f"   Required: {step52_enriched} OR {step60_enriched} (with data)")
+        print(f"   Reason: Neither Step 52 nor Step 60 has produced enriched endpoints")
+        print(f"   Note: Run either Step 52 (modern) or Steps 40/50/60 (legacy) first")
         print("")
         return
+    
+    # org_to_npi_path is optional - Step 89 will extract from enriched_endpoints if not available
+    org_to_npi_path = get_env_var(key="ORG_TO_NPI_RAW", default_value="../npd_slurp_cehrt_clientfhir_cache/cache/summary_data/step40_org_to_npi.csv")
+    output_csv_path = get_env_var(key="CEHRT_FHIR_REPORT_CSV", default_value="../npd_slurp_cehrt_clientfhir_cache/cache/summary_data/step89_CEHRT_FHIR_Report.csv")
     
     run_step(
         step_num=89,
@@ -456,10 +493,14 @@ Steps:
   30 - Parse FHIR bundles into individual resource files
   40 - Extract CSV data from FHIR JSON files (legacy)
   45 - Process FHIR cache with cehrt_fhir_parser (modern OOP implementation)
-  50 - Clean output data (validate URLs and NPIs)
-  60 - Calculate open endpoints (discover metadata, SMART, OpenAPI, Swagger)
+  50 - Clean output data (legacy - validate URLs and NPIs)
+  52 - Discover endpoints from Step 45 output (MODERN - replaces 40/50/60)
+  60 - Calculate open endpoints (legacy - discover metadata, SMART, OpenAPI, Swagger)
   89 - Generate CEHRT Dashboard CSV
   90 - Make CEHRT Dashboard Markdown report
+  
+Modern Pipeline: 10 → 20 → 30 → 45 → 52 → 89 → 90
+Legacy Pipeline: 10 → 20 → 30 → 40 → 50 → 60 → 89 → 90
         """
     )
     
@@ -494,6 +535,7 @@ Steps:
         40: run_step_40,
         45: run_step_45,
         50: run_step_50,
+        52: run_step_52,
         60: run_step_60,
         89: run_step_89,
         90: run_step_90
