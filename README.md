@@ -234,9 +234,14 @@ DOWNLOAD_DELAY=1.0  # Seconds between downloads
 FHIR_REQUEST_TIMEOUT=30  # API request timeout
 
 # Processing Options
-TEST_MODE=false  # Set to true for limited processing
-VERBOSE_MODE=false  # Set to true for detailed output
+TEST_MODE=false                # Process only small subset of data (for testing pipeline)
+PARTIAL_TEST_VALIDATION=false  # Skip some validation checks (for faster processing)
+VERBOSE_MODE=false             # Enable detailed output
 ```
+
+**Note**: `TEST_MODE` and `PARTIAL_TEST_VALIDATION` are independent:
+- **TEST_MODE**: Limits the *amount* of data processed (small subset for pipeline testing)
+- **PARTIAL_TEST_VALIDATION**: Affects validation *thoroughness* (processes all data, but with fewer validation checks)
 
 ## Common Use Cases
 
@@ -248,8 +253,10 @@ python go.py
 
 ### Development & Testing
 
+**Note**: TEST_MODE is **off by default**. Use these commands only for testing/development.
+
 ```bash
-# Process just 100 files per vendor (test mode)
+# Process just 100 files per vendor (test mode - off by default)
 TEST_MODE=true python go.py
 
 # Test just the parser stage
