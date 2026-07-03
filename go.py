@@ -546,23 +546,6 @@ Steps:
             print(f"  - Enriched endpoints: {enriched_csv}")
         print("")
     
-    print("Available Options:")
-    print("  - Set TEST_MODE=true             : Process only a small subset of data (for testing pipeline)")
-    print("  - Set PARTIAL_TEST_VALIDATION=true : Skip some validation checks (for faster processing)")
-    print("  - Set VERBOSE_MODE=true          : Enable verbose processing output")
-    print("")
-    print("Note: TEST_MODE and PARTIAL_TEST_VALIDATION are independent options:")
-    print("  - TEST_MODE limits the amount of data processed (small subset)")
-    print("  - PARTIAL_TEST_VALIDATION affects validation thoroughness (all data, less validation)")
-    print("  - Both default to 'false' (full data processing with full validation)")
-    print("")
-    print("Performance Notes:")
-    if 45 in steps_to_run:
-        print("  - Step 45 uses parallel processing with 4 workers (~4x faster)")
-        print("  - Automatically merges outputs and cleans up process subdirectories")
-    print("")
-    print("Testing:")
-    print("  - Run tests: python test_parser.py")
 
 
 if __name__ == "__main__":

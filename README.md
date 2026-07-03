@@ -3,7 +3,7 @@
 A data processing pipeline for extracting and normalizing EHR FHIR endpoint data from healthcare providers. Processes data from the [Lantern Dashboard](https://lantern.healthit.gov/) to generate PostgreSQL-ready datasets for healthcare interoperability analysis.
 
 **Project Home**: [/DSACMS/npd_ehr_fhir_npi_slurp](https://github.com/DSACMS/npd_ehr_fhir_npi_slurp)  
-**Cache Repository**: [npd_ehr_scrape_cache](https://github.com/ftrotter-gov/npd_ehr_scrape_cache)
+**Cache Repository**: [npd_slurp_cehrt_clientfhir_cache](https://github.com/ftrotter-gov/npd_slurp_cehrt_clientfhir_cache)
 
 ## Quick Start
 
@@ -224,9 +224,9 @@ Create or edit `data_files.env` to customize paths:
 ```bash
 # Input/Output Paths
 LANTERN_CSV_INPUT=local_data/lantern_csv/fhir_endpoints.csv
-LIST_SOURCES_SUMMARY=../npd_ehr_scrape_cache/list_sources_summary.csv
-CEHRT_CACHE_DIR=../npd_ehr_scrape_cache/cache/fhir_json_cache/
-SERVICE_JSON_DIR=../npd_ehr_scrape_cache/cache/fhir_json_cache/
+LIST_SOURCES_SUMMARY=../npd_slurp_cehrt_clientfhir_cache/list_sources_summary.csv
+CEHRT_CACHE_DIR=../npd_slurp_cehrt_clientfhir_cache/cache/fhir_json_cache/
+SERVICE_JSON_DIR=../npd_slurp_cehrt_clientfhir_cache/cache/fhir_json_cache/
 PARSER_OUTPUT_DIR=./parser_output
 
 # Performance Tuning
