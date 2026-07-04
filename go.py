@@ -238,7 +238,7 @@ def run_step_30():
 def run_step_45():
     """Step 45: Process FHIR cache with cehrt_fhir_parser (OOP implementation)."""
     cache_dir = get_env_var(key="SERVICE_JSON_DIR", default_value="../npd_slurp_cehrt_clientfhir_cache/cache/fhir_json_cache/")
-    output_dir = get_env_var(key="V2_PARSER_CSV_DIR", default_value="./parser_output")
+    output_dir = get_env_var(key="V2_PARSER_CSV_DIR", default_value="../npd_slurp_cehrt_clientfhir_cache/cache/parser_output/")
     
     print("FHIR Cache Parser (OOP Implementation):")
     print("  - Processing FHIR cache with modern OOP parser")
@@ -311,7 +311,7 @@ def run_step_45():
 
 def run_step_52():
     """Step 52: Discover endpoints from Step 45 output (MODERN)."""
-    input_dir = get_env_var(key="V2_PARSER_CSV_DIR", default_value="./parser_output")
+    input_dir = get_env_var(key="V2_PARSER_CSV_DIR", default_value="../npd_slurp_cehrt_clientfhir_cache/cache/parser_output/")
     output_file = get_env_var(key="ENRICHED_ENDPOINTS", default_value="../npd_slurp_cehrt_clientfhir_cache/cache/summary_data/step52_enriched_endpoints.csv")
     
     # Check prerequisite: Step 45 must have produced endpoint_instance.csv

@@ -229,7 +229,7 @@ The `cehrt_fhir_parser` package is a **parser-only** tool that:
 - Lose visibility into vendor API maturity
 
 **Output files no longer generated:**
-- `step60_enriched_endpoints.csv` (org_fhir_url, npi, capability_url, smart_url, openapi_docs_url, openapi_json_url, swagger_url, swagger_json_url)
+- `step52_enriched_endpoints.csv` (org_fhir_url, npi, capability_url, smart_url, openapi_docs_url, openapi_json_url, swagger_url, swagger_json_url)
 
 #### 4. Vendor Compliance Dashboard (Step89, Step90)
 
