@@ -339,6 +339,7 @@ def run_step_89():
     """Step 89: Generate CEHRT Dashboard CSV."""
     list_sources_path = get_env_var(key="LIST_SOURCES_SUMMARY", default_value="../npd_slurp_cehrt_clientfhir_cache/list_sources_summary.csv")
     enriched_endpoints_path = get_env_var(key="ENRICHED_ENDPOINTS", default_value="../npd_slurp_cehrt_clientfhir_cache/cache/summary_data/step52_enriched_endpoints.csv")
+    output_csv_path = get_env_var(key="CEHRT_FHIR_REPORT_CSV", default_value="../npd_slurp_cehrt_clientfhir_cache/cache/summary_data/step89_CEHRT_FHIR_Report.csv")
     
     # Check prerequisite: Step 52 must have produced data
     if not check_file_has_data(file_path=enriched_endpoints_path, min_lines=2):
@@ -349,10 +350,6 @@ def run_step_89():
         print("")
         return
     
-    # org_to_npi_path is optional - Step 89 will extract from enriched_endpoints if not available
-    org_to_npi_path = get_env_var(key="ORG_TO_NPI_RAW", default_value="../npd_slurp_cehrt_clientfhir_cache/cache/summary_data/step40_org_to_npi.csv")
-    output_csv_path = get_env_var(key="CEHRT_FHIR_REPORT_CSV", default_value="../npd_slurp_cehrt_clientfhir_cache/cache/summary_data/step89_CEHRT_FHIR_Report.csv")
-    
     run_step(
         step_num=89,
         description="Generating CEHRT Dashboard CSV with compliance data",
@@ -360,7 +357,6 @@ def run_step_89():
             "python", "Step89_GenerateCEHRTDashboardCSV.py",
             "--list_sources_path", list_sources_path,
             "--enriched_endpoints_path", enriched_endpoints_path,
-            "--org_to_npi_path", org_to_npi_path,
             "--output_csv_path", output_csv_path
         ]
     )

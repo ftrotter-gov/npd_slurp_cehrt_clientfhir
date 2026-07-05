@@ -94,9 +94,11 @@ class EndpointDiscovery:
                 reader = csv.DictReader(csvfile)
                 
                 for row in reader:
-                    endpoint_url = row.get('endpoint_url', '').strip()
-                    endpoint_uuid = row.get('endpoint_uuid', '').strip()
-                    org_name = row.get('organization_name', '').strip()
+                    # Step 45 uses 'address' for endpoint URL, 'id' for UUID
+                    endpoint_url = row.get('address', '').strip()
+                    endpoint_uuid = row.get('id', '').strip()
+                    # Use vendor_name as a fallback for organization context
+                    org_name = row.get('name', '').strip() or row.get('vendor_name', '').strip()
                     
                     if endpoint_url:
                         # Get NPIs for this endpoint (may be multiple or none)

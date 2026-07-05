@@ -242,24 +242,27 @@ def main():
     parser = argparse.ArgumentParser(description='Generate CEHRT Dashboard CSV')
     parser.add_argument('--list_sources_path', required=True, help='Path to list_sources_summary.csv file')
     parser.add_argument('--enriched_endpoints_path', required=True, help='Path to enriched_endpoints.csv file')
-    parser.add_argument('--org_to_npi_path', required=True, help='Path to org_to_npi.csv file')
     parser.add_argument('--output_csv_path', required=True, help='Path to output CSV file')
     
     args = parser.parse_args()
     
     list_sources_path = args.list_sources_path
     enriched_path = args.enriched_endpoints_path
-    org_to_npi_path = args.org_to_npi_path
     output_csv = args.output_csv_path
+    org_to_npi_path = None  # No longer used - data comes from enriched_endpoints.csv
 
     print("Loading vendor mapping from local_data/prod_data/list_sources_summary.csv...")
     vendor_map = load_vendor_mapping(list_sources_path)
     print(f"Loaded {len(vendor_map)} vendor base domains.")
 
-    print("Parsing org_to_npi.csv for partial compliance info...")
-    with open(org_to_npi_path, newline='', encoding='utf-8') as f:
-        org_to_npi_count = sum(1 for _ in f) - 1
-    print(f"Found {org_to_npi_count} org_id rows in org_to_npi.csv.")
+    # Check if org_to_npi.csv exists (optional - will extract from enriched_endpoints if not)
+    if org_to_npi_path and os.path.exists(org_to_npi_path):
+        print("Parsing org_to_npi.csv for partial compliance info...")
+        with open(org_to_npi_path, newline='', encoding='utf-8') as f:
+            org_to_npi_count = sum(1 for _ in f) - 1
+        print(f"Found {org_to_npi_count} org_id rows in org_to_npi.csv.")
+    else:
+        print("Note: org_to_npi.csv not found - will extract NPI data from enriched_endpoints.csv")
 
     print("Parsing enriched_endpoints.csv for endpoint compliance info...")
     with open(enriched_path, newline='', encoding='utf-8') as f:
