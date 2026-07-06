@@ -339,7 +339,7 @@ def run_step_89():
     """Step 89: Generate CEHRT Dashboard CSV."""
     list_sources_path = get_env_var(key="LIST_SOURCES_SUMMARY", default_value="../npd_slurp_cehrt_clientfhir_cache/list_sources_summary.csv")
     enriched_endpoints_path = get_env_var(key="ENRICHED_ENDPOINTS", default_value="../npd_slurp_cehrt_clientfhir_cache/cache/summary_data/step52_enriched_endpoints.csv")
-    output_csv_path = get_env_var(key="CEHRT_FHIR_REPORT_CSV", default_value="../npd_slurp_cehrt_clientfhir_cache/cache/summary_data/step89_CEHRT_FHIR_Report.csv")
+    output_csv_path = get_env_var(key="CEHRT_FHIR_REPORT_CSV", default_value="CEHRT_FHIR_Report.csv")
     
     # Check prerequisite: Step 52 must have produced data
     if not check_file_has_data(file_path=enriched_endpoints_path, min_lines=2):
@@ -364,8 +364,8 @@ def run_step_89():
 
 def run_step_90():
     """Step 90: Make CEHRT Dashboard Markdown."""
-    input_csv_path = get_env_var(key="CEHRT_FHIR_REPORT_CSV", default_value="../npd_slurp_cehrt_clientfhir_cache/cache/summary_data/step89_CEHRT_FHIR_Report.csv")
-    output_md_path = get_env_var(key="CEHRT_FHIR_REPORT_MD", default_value="../npd_slurp_cehrt_clientfhir_cache/cache/summary_data/step90_CEHRT_FHIR_Report.md")
+    input_csv_path = get_env_var(key="CEHRT_FHIR_REPORT_CSV", default_value="CEHRT_FHIR_Report.csv")
+    output_md_path = get_env_var(key="CEHRT_FHIR_REPORT_MD", default_value="CEHRT_FHIR_Report.md")
     
     # Check prerequisite: Step 89 must have produced data
     if not check_file_has_data(file_path=input_csv_path, min_lines=2):
@@ -477,7 +477,7 @@ Pipeline: 10 → 20 → 30 → 45 → 52 → 89 → 90
     
     # Show summary based on what was run
     if 90 in steps_to_run:
-        output_md = get_env_var(key="CEHRT_FHIR_REPORT_MD", default_value="../npd_slurp_cehrt_clientfhir_cache/cache/summary_data/step90_CEHRT_FHIR_Report.md")
+        output_md = get_env_var(key="CEHRT_FHIR_REPORT_MD", default_value="CEHRT_FHIR_Report.md")
         print("Dashboard Generation Complete:")
         print(f"  - View dashboard: {output_md}")
         print("")
