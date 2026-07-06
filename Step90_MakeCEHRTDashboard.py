@@ -63,7 +63,7 @@ def get_base_domain(url):
 
 def load_vendor_mapping(list_sources_path):
     """
-    Returns a dict mapping base domain (scheme://netloc) to certified_api_developer_name.
+    Returns a dict mapping base domain (scheme://netloc) to api_developer_name.
     If multiple list_sources share a domain, the last one wins.
     """
     mapping = {}
@@ -71,7 +71,7 @@ def load_vendor_mapping(list_sources_path):
         reader = csv.DictReader(f)
         for row in reader:
             list_source = row.get("list_source", "").strip()
-            vendor = row.get("certified_api_developer_name", "").strip()
+            vendor = row.get("api_developer_name", "").strip()
             if list_source.startswith("http"):
                 base = get_base_domain(list_source)
                 mapping[base] = vendor if vendor else "Unknown, missing from list_sources_summary.csv"

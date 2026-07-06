@@ -1,192 +1,197 @@
 Vendor,Reachable,Has ONPI,HTTPS ORG URL,Findable Metadata,Findable SMART,Findable OpenAPI Docs,Findable OpenAPI JSON,Findable Swagger,Findable Swagger JSON
-"CloudCraft, LLC",True,True,True,https://fhirapi.naiacorp.net/metadata,https://fhirapi.naiacorp.net/.well-known/smart-configuration,https://fhirapi.naiacorp.net/api-docs,https://fhirapi.naiacorp.net/openapi.json,https://fhirapi.naiacorp.net/swagger,https://fhirapi.naiacorp.net/swagger.json
-drchrono Inc.,True,True,True,https://drchrono-fhirpresentation.everhealthsoftware.com/fhir/metadata,https://drchrono-fhirpresentation.everhealthsoftware.com/fhir/.well-known/smart-configuration,https://drchrono-fhirpresentation.everhealthsoftware.com/api-docs,https://drchrono-fhirpresentation.everhealthsoftware.com/openapi.json,https://drchrono-fhirpresentation.everhealthsoftware.com/swagger,https://drchrono-fhirpresentation.everhealthsoftware.com/swagger.json
-"DSS, Inc.",True,True,True,https://fhirjuno-prod-web.dssinc.com/metadata,https://fhirjuno-prod-web.dssinc.com/.well-known/smart-configuration,https://fhirjuno-prod-web.dssinc.com/api-docs,https://fhirjuno-prod-web.dssinc.com/openapi.json,https://fhirjuno-prod-web.dssinc.com/swagger,https://fhirjuno-prod-web.dssinc.com/swagger.json
-Enable Healthcare Inc.,True,True,True,https://ehifhir.ehiconnect.com/metadata,https://ehifhir.ehiconnect.com/.well-known/smart-configuration,https://ehifhir.ehiconnect.com/api-docs,https://ehifhir.ehiconnect.com/openapi.json,https://ehifhir.ehiconnect.com/swagger,https://ehifhir.ehiconnect.com/swagger.json
-EnableDoc LLC,True,True,True,https://api.enablemyhealth.com/metadata,https://api.enablemyhealth.com/api/r4/.well-known/smart-configuration,https://api.enablemyhealth.com/api/r4/Organization/api-docs,https://api.enablemyhealth.com/api/r4/Organization/openapi.json,https://api.enablemyhealth.com/api/r4/Organization/swagger,https://api.enablemyhealth.com/api/r4/Organization/swagger.json
-"Health Innovation Technologies, Inc.",True,True,True,https://revolutionehr.dynamicfhir.com/metadata,https://revolutionehr.dynamicfhir.com/.well-known/smart-configuration,https://revolutionehr.dynamicfhir.com/api-docs,https://revolutionehr.dynamicfhir.com/openapi.json,https://revolutionehr.dynamicfhir.com/swagger,https://revolutionehr.dynamicfhir.com/swagger.json
-iSALUS Healthcare,True,True,True,https://isalus-fhirpresentation.everhealthsoftware.com/metadata,https://isalus-fhirpresentation.everhealthsoftware.com/.well-known/smart-configuration,https://isalus-fhirpresentation.everhealthsoftware.com/api-docs,https://isalus-fhirpresentation.everhealthsoftware.com/openapi.json,https://isalus-fhirpresentation.everhealthsoftware.com/swagger,https://isalus-fhirpresentation.everhealthsoftware.com/swagger.json
-"MedConnect, Inc.",True,True,True,https://api.medconnecthealth.com/metadata,https://api.medconnecthealth.com/.well-known/smart-configuration,https://api.medconnecthealth.com/api-docs,https://api.medconnecthealth.com/openapi.json,https://api.medconnecthealth.com/swagger,https://api.medconnecthealth.com/swagger.json
-"myhELO, Inc.",True,True,True,https://provider.myhelo.com/metadata,https://provider.myhelo.com/.well-known/smart-configuration,https://provider.myhelo.com/api-docs,https://provider.myhelo.com/openapi.json,https://provider.myhelo.com/swagger,https://provider.myhelo.com/swagger.json
-Streamline Healthcare Solutions,True,True,True,https://dhfhirpresentation.smartcarenet.com/metadata,https://dhfhirpresentation.smartcarenet.com/.well-known/smart-configuration,https://dhfhirpresentation.smartcarenet.com/api-docs,https://dhfhirpresentation.smartcarenet.com/openapi.json,https://dhfhirpresentation.smartcarenet.com/swagger,https://dhfhirpresentation.smartcarenet.com/swagger.json
-Unknown,True,True,True,https://fhir.nextgen.com/nge/prod/fhir-api-r4/fhir/R4/metadata,https://fhir.nextgen.com/nge/prod/fhir-api-r4/fhir/R4/.well-known/smart-configuration,https://ice3.mychn.org/apis/api-docs,https://ice3.mychn.org/apis/openapi.json,https://ice3.mychn.org/swagger,https://ice3.mychn.org/apis/swagger.json
-"EyeMD EMR Healthcare Systems, Inc.",True,True,True,https://smartonfhir.myeyecarerecords.com/fhir/Organization/metadata,https://smartonfhir.myeyecarerecords.com/fhir/Organization/.well-known/smart-configuration,https://smartonfhir.myeyecarerecords.com/fhir/Organization/api-docs,https://smartonfhir.myeyecarerecords.com/fhir/Organization/openapi.json,False,False
-MaxRemind Inc,True,True,True,https://fhir.maximus.care/api/metadata,https://fhir.maximus.care/api/.well-known/smart-configuration,False,False,https://fhir.maximus.care/swagger,False
-Medcare MSO,True,True,True,https://fhirapi.medcaremso.com/api/R4/metadata,https://fhirapi.medcaremso.com/api/R4/.well-known/smart-configuration,False,False,https://fhirapi.medcaremso.com/api/R4/swagger,False
-Mendelson Kornblum Orthopedic & Spine Specialists,True,True,True,https://fhir.mkoss.com/fhir/metadata,https://fhir.mkoss.com/fhir/.well-known/smart-configuration,False,False,https://fhir.mkoss.com/swagger,False
-"TruBridge, Inc.",True,True,True,https://fhir-usa.unify.chbase.com/metadata,https://fhir-usa.unify.chbase.com/.well-known/smart-configuration,False,False,https://fhir-usa.unify.chbase.com/swagger,False
-Avon Health,True,True,True,https://trial.avonhealth.com/fhir/metadata,https://trial.avonhealth.com/fhir/.well-known/smart-configuration,False,False,False,False
-"CureMD.com, Inc.",True,True,True,https://fhirendpoint.curemd.net/fhir/metadata,https://fhirendpoint.curemd.net/fhir/.well-known/smart-configuration,False,False,False,False
-Cyfluent,True,True,True,https://www.cyfluentphr.com/fhirapi/HBSH/r4/metadata,https://www.cyfluentphr.com/fhirapi/HBSH/r4/.well-known/smart-configuration,False,False,False,False
-EDENLAB OÜ,True,True,True,https://staging.pemr.com:93/api/metadata,https://staging.pemr.com:93/api/.well-known/smart-configuration,False,False,False,False
-Flatiron Health,True,True,True,https://fhir.prod.flatiron.io/fhir/metadata,https://fhir.prod.flatiron.io/fhir/.well-known/smart-configuration,False,False,False,False
-"GeniusDoc, Inc.",True,True,True,https://api.geniusdoc.com:4434/GDAPIData/metadata,https://api.geniusdoc.com:4434/GDAPIData/.well-known/smart-configuration,False,False,False,False
-Net Health,True,True,True,https://sfp-fhirprod.azurewebsites.net/fhir/metadata,https://sfp-fhirprod.azurewebsites.net/fhir/.well-known/smart-configuration,False,False,False,False
-"Theoria Medical, PLLC",True,True,True,https://theoriamedical-api.charteasy.com/fhir/metadata,https://theoriamedical-api.charteasy.com/fhir/.well-known/smart-configuration,False,False,False,False
-WRS Health,True,True,True,https://fhir-server.sam.wrs.dev/r4/metadata,https://fhir-server.sam.wrs.dev/r4/.well-known/smart-configuration,False,False,False,False
-InteliChart LLC,True,True,True,False,False,False,False,https://fhirapi.intelichart.com/swagger,False
-AdvancedMD,True,False,True,False,False,False,False,False,False
-agilon health inc.,True,False,True,False,False,False,False,False,False
-AssureCare LLC,False,True,True,False,False,False,False,False,False
-"DigiDMS, Inc.",False,True,True,False,False,False,False,False,False
-DOX EMR,True,False,True,False,False,False,False,False,False
-"Dynamic Health IT, Inc",False,True,True,False,False,False,False,False,False
-"ezCaretech Co., Ltd.",False,True,True,False,False,False,False,False,False
-ezEMRx Inc,False,True,True,False,False,False,False,False,False
-"Integra Connect Newco, LLC",True,False,True,False,False,False,False,False,False
-"MD Synergy Solutions, LLC",True,False,True,False,False,False,False,False,False
-"MedAZ.Net, LLC",False,True,True,False,False,False,False,False,False
-Office Practicum,False,True,True,False,False,False,False,False,False
-"Sevocity, a division of Conceptual MindWorks, Inc",True,False,True,False,False,False,False,False,False
-"SolidPractice Technologies, LLC",False,True,True,False,False,False,False,False,False
-"TechSoft, Inc.",True,False,True,False,False,False,False,False,False
+Aarista Technology LLC,True,False,https://emrfhirpresentation.aarista.com/fhir/aarista/basepractice/r4,https://emrfhirpresentation.aarista.com/fhir/aarista/metadata,https://emrfhirpresentation.aarista.com/fhir/.well-known/smart-configuration,https://emrfhirpresentation.aarista.com/fhir/aarista/api-docs,https://emrfhirpresentation.aarista.com/fhir/aarista/openapi.json,https://emrfhirpresentation.aarista.com/fhir/aarista/swagger,https://emrfhirpresentation.aarista.com/fhir/aarista/swagger.json
+Axxess,True,False,https://fhirpresentationdev.axxessweb.com/fhir/dhit/basepractice/r4,https://fhirpresentationdev.axxessweb.com/fhir/dhit/metadata,https://fhirpresentationdev.axxessweb.com/fhir/.well-known/smart-configuration,https://fhirpresentationdev.axxessweb.com/fhir/dhit/api-docs,https://fhirpresentationdev.axxessweb.com/fhir/dhit/openapi.json,https://fhirpresentationdev.axxessweb.com/fhir/dhit/swagger,https://fhirpresentationdev.axxessweb.com/fhir/dhit/swagger.json
+Azalea Health,True,False,https://api.azaleahealth.com/fhir/R4/freedom-behavioral-hospital-of-west-monroe,https://api.azaleahealth.com/fhir/R4/hanover-hospital/metadata,https://api.azaleahealth.com/.well-known/smart-configuration,https://app.azaleahealth.com/api-docs,https://app.azaleahealth.com/openapi.json,https://app.azaleahealth.com/swagger,https://app.azaleahealth.com/swagger.json
+"CloudCraft, LLC",True,False,https://fhirapi.naiacorp.net/fhir/cloudcraft/basepractice/r4,https://fhirapi.naiacorp.net/metadata,https://fhirapi.naiacorp.net/.well-known/smart-configuration,https://fhirapi.naiacorp.net/api-docs,https://fhirapi.naiacorp.net/openapi.json,https://fhirapi.naiacorp.net/swagger,https://fhirapi.naiacorp.net/swagger.json
+Compulink Healthcare Solutions,True,False,https://fhir.compulinkadvantage.com/99754/,https://fhir.compulinkadvantage.com/metadata,https://fhir.compulinkadvantage.com/.well-known/smart-configuration,https://fhir.compulinkadvantage.com/api-docs,https://fhir.compulinkadvantage.com/openapi.json,https://fhir.compulinkadvantage.com/swagger,https://fhir.compulinkadvantage.com/swagger.json
+Darena Solutions LLC dba Darena Health,True,False,https://app.meldrx.com/api/fhir/rt_apthealthcare,https://app.meldrx.com/metadata,https://app.meldrx.com/api/fhir/rt_thetherapyvillage/.well-known/smart-configuration,https://app.meldrx.com/api-docs,https://app.meldrx.com/openapi.json,https://app.meldrx.com/swagger,https://app.meldrx.com/swagger.json
+drchrono Inc.,True,False,https://drchrono-fhirpresentation.everhealthsoftware.com/fhir/drchrono/510063/r4,https://drchrono-fhirpresentation.everhealthsoftware.com/fhir/drchrono/metadata,https://drchrono-fhirpresentation.everhealthsoftware.com/fhir/.well-known/smart-configuration,https://drchrono-fhirpresentation.everhealthsoftware.com/fhir/drchrono/api-docs,https://drchrono-fhirpresentation.everhealthsoftware.com/fhir/drchrono/openapi.json,https://drchrono-fhirpresentation.everhealthsoftware.com/fhir/drchrono/swagger,https://drchrono-fhirpresentation.everhealthsoftware.com/fhir/drchrono/swagger.json
+"Dynamic Health IT, Inc",True,False,https://dynamicfhirpresentation.dynamicfhirsandbox.com/fhir/dhit/crossfhirtt2/r4,https://dynamicfhirpresentation.dynamicfhirsandbox.com/fhir/dhit/metadata,https://dynamicfhirpresentation.dynamicfhirsandbox.com/fhir/.well-known/smart-configuration,https://dynamicfhirpresentation.dynamicfhirsandbox.com/fhir/dhit/api-docs,https://dynamicfhirpresentation.dynamicfhirsandbox.com/fhir/dhit/openapi.json,https://dynamicfhirpresentation.dynamicfhirsandbox.com/fhir/dhit/swagger,https://dynamicfhirpresentation.dynamicfhirsandbox.com/fhir/dhit/swagger.json
+Enable Healthcare Inc.,True,False,https://ehifhir.ehiconnect.com/fhir/ehi/a4613e8d72a61b3b69b32d040f89ad81/r4,https://ehifhir.ehiconnect.com/fhir/ehi/metadata,https://ehifhir.ehiconnect.com/fhir/.well-known/smart-configuration,https://ehifhir.ehiconnect.com/fhir/ehi/api-docs,https://ehifhir.ehiconnect.com/fhir/ehi/openapi.json,https://ehifhir.ehiconnect.com/fhir/ehi/swagger,https://ehifhir.ehiconnect.com/fhir/ehi/swagger.json
+"Health Innovation Technologies, Inc.",True,False,https://revolutionehr.dynamicfhir.com/fhir/revolutionehr/4357/r4,https://revolutionehr.dynamicfhir.com/fhir/revolutionehr/metadata,https://revolutionehr.dynamicfhir.com/fhir/.well-known/smart-configuration,https://revolutionehr.dynamicfhir.com/fhir/revolutionehr/api-docs,https://revolutionehr.dynamicfhir.com/fhir/revolutionehr/openapi.json,https://revolutionehr.dynamicfhir.com/fhir/revolutionehr/swagger,https://revolutionehr.dynamicfhir.com/fhir/revolutionehr/swagger.json
+"Health Samurai, Inc.",True,False,https://fhir-app-portal.aidbox.app/Organization/5d4b9df1-93ae-3bc9-b680-03249990e558/fhir,https://fhir-app-portal.aidbox.app/metadata,https://fhir-app-portal.aidbox.app/.well-known/smart-configuration,https://fhir-app-portal.aidbox.app/api-docs,https://fhir-app-portal.aidbox.app/openapi.json,https://fhir-app-portal.aidbox.app/swagger,https://fhir-app-portal.aidbox.app/swagger.json
+iSALUS Healthcare,True,False,https://isalus-fhirpresentation.everhealthsoftware.com/fhir/isalus/c5189/r4,https://isalus-fhirpresentation.everhealthsoftware.com/fhir/isalus/metadata,https://isalus-fhirpresentation.everhealthsoftware.com/fhir/.well-known/smart-configuration,https://isalus-fhirpresentation.everhealthsoftware.com/fhir/isalus/api-docs,https://isalus-fhirpresentation.everhealthsoftware.com/fhir/isalus/openapi.json,https://isalus-fhirpresentation.everhealthsoftware.com/fhir/isalus/swagger,https://isalus-fhirpresentation.everhealthsoftware.com/fhir/isalus/swagger.json
+Juno Health,True,False,https://fhirjuno-prod-web.dssinc.com/fhir/communityhospitals/01ho/r4,https://fhirjuno-prod-web.dssinc.com/fhir/communityhealthhospitals/metadata,https://fhirjuno-prod-web.dssinc.com/fhir/.well-known/smart-configuration,https://fhirjuno-prod-web.dssinc.com/fhir/communityhealthhospitals/api-docs,https://fhirjuno-prod-web.dssinc.com/fhir/communityhealthhospitals/openapi.json,https://fhirjuno-prod-web.dssinc.com/fhir/communityhealthhospitals/swagger,https://fhirjuno-prod-web.dssinc.com/fhir/communityhealthhospitals/swagger.json
+"Lille Group, Inc.",True,False,https://portal.escribe.com/ehr/api/fhir/metadata,https://portal.escribe.com/ehr/api/fhir/metadata,https://portal.escribe.com/ehr/api/fhir/.well-known/smart-configuration,https://portal.escribe.com/ehr/api/fhir/api-docs,https://portal.escribe.com/ehr/api/fhir/metadata/openapi.json,https://portal.escribe.com/ehr/api/fhir/metadata/swagger,https://portal.escribe.com/ehr/api/fhir/metadata/swagger.json
+"MicroMD, LLC",True,False,https://micromd.dynamicfhir.com/fhir/micromd/basepractice/r4,https://micromd.dynamicfhir.com/fhir/micromd/metadata,https://micromd.dynamicfhir.com/fhir/.well-known/smart-configuration,https://micromd.dynamicfhir.com/fhir/micromd/api-docs,https://micromd.dynamicfhir.com/fhir/micromd/openapi.json,https://micromd.dynamicfhir.com/fhir/micromd/swagger,https://micromd.dynamicfhir.com/fhir/micromd/swagger.json
+"myhELO, Inc.",True,False,https://provider.myhelo.com/fhir/Organization/,https://provider.myhelo.com/metadata,https://provider.myhelo.com/.well-known/smart-configuration,https://provider.myhelo.com/api-docs,https://provider.myhelo.com/openapi.json,https://provider.myhelo.com/swagger,https://provider.myhelo.com/swagger.json
+"Office Ally, LLC",True,False,https://fhirpt.officeally.com/fhir/officeally/15659/r4,https://fhirpt.officeally.com/fhir/officeally/metadata,https://fhirpt.officeally.com/fhir/.well-known/smart-configuration,https://fhirpt.officeally.com/fhir/officeally/api-docs,https://fhirpt.officeally.com/fhir/officeally/openapi.json,https://fhirpt.officeally.com/fhir/officeally/swagger,https://fhirpt.officeally.com/fhir/officeally/swagger.json
+Prime Clinical Systems,True,False,https://fhirpresentation.pcsdataxchg.com/fhir/dhit/n11/r4,https://fhirpresentation.pcsdataxchg.com/fhir/dhit/metadata,https://fhirpresentation.pcsdataxchg.com/fhir/.well-known/smart-configuration,https://fhirpresentation.pcsdataxchg.com/fhir/dhit/api-docs,https://fhirpresentation.pcsdataxchg.com/fhir/dhit/openapi.json,https://fhirpresentation.pcsdataxchg.com/fhir/dhit/swagger,https://fhirpresentation.pcsdataxchg.com/fhir/dhit/swagger.json
+Procentive,True,False,https://fhir.procentive.com/fhir/procentive/basepractice/r4,https://fhir.procentive.com/metadata,https://fhir.procentive.com/.well-known/smart-configuration,https://fhir.procentive.com/api-docs,https://fhir.procentive.com/openapi.json,https://fhir.procentive.com/swagger,https://fhir.procentive.com/swagger.json
+Streamline Healthcare Solutions,True,False,https://dhfhirpresentation.smartcarenet.com/fhir/sandiegocountymentalhealth/1568599397/r4,https://dhfhirpresentation.smartcarenet.com/fhir/volunteersofamericaofflorida/metadata,https://dhfhirpresentation.smartcarenet.com/fhir/.well-known/smart-configuration,https://dhfhirpresentation.smartcarenet.com/fhir/volunteersofamericaofflorida/api-docs,https://dhfhirpresentation.smartcarenet.com/fhir/volunteersofamericaofflorida/openapi.json,https://dhfhirpresentation.smartcarenet.com/fhir/volunteersofamericaofflorida/swagger,https://dhfhirpresentation.smartcarenet.com/fhir/volunteersofamericaofflorida/swagger.json
+"Tebra Technologies, Inc.",True,False,https://fhir.prd.cloud.tebra.com/fhir-request,https://fhir.prd.cloud.tebra.com/metadata,https://fhir.prd.cloud.tebra.com/.well-known/smart-configuration,https://fhir.prd.cloud.tebra.com/api-docs,https://fhir.prd.cloud.tebra.com/openapi.json,https://fhir.prd.cloud.tebra.com/swagger,https://fhir.prd.cloud.tebra.com/swagger.json
+TenEleven Group,True,False,https://fhir.10e11.com/fhir/dhit/ss0001/r4,https://fhir.10e11.com/metadata,https://fhir.10e11.com/.well-known/smart-configuration,https://fhir.10e11.com/api-docs,https://fhir.10e11.com/openapi.json,https://fhir.10e11.com/swagger,https://fhir.10e11.com/swagger.json
+TronsHealth LLC,True,False,https://akpc.tronshealth.com/fhirv4.0,https://akpc.tronshealth.com/metadata,https://akpc.tronshealth.com/.well-known/smart-configuration,https://akpc.tronshealth.com/api-docs,https://akpc.tronshealth.com/openapi.json,https://akpc.tronshealth.com/swagger,https://akpc.tronshealth.com/swagger.json
+"Unknown, missing from list_sources_summary.csv",True,False,https://fhir.healthtogo.me/fhir/r4/zoobook.journeytowellness,https://ccdoc.phn.care/metadata,https://ccdoc.phn.care/.well-known/smart-configuration,https://fhirdev.fhirpointdev.open.allscripts.com/api-docs,https://fhirdev.fhirpointdev.open.allscripts.com/openapi.json,https://fhirdev.fhirpointdev.open.allscripts.com/swagger,https://fhirdev.fhirpointdev.open.allscripts.com/swagger.json
+Varian Medical Systems,True,False,https://varian.dynamicfhir.com/fhir/varian/basepractice/r4,https://varian.dynamicfhir.com/fhir/varian/metadata,https://varian.dynamicfhir.com/fhir/.well-known/smart-configuration,https://varian.dynamicfhir.com/fhir/varian/api-docs,https://varian.dynamicfhir.com/fhir/varian/openapi.json,https://varian.dynamicfhir.com/fhir/varian/swagger,https://varian.dynamicfhir.com/fhir/varian/swagger.json
+VisionWeb,True,False,https://dhpresentation.youruprise.com/fhir/boardwalk/4ah5/r4,https://dhpresentation.youruprise.com/fhir/ioc/metadata,https://dhpresentation.youruprise.com/fhir/.well-known/smart-configuration,https://dhpresentation.youruprise.com/fhir/ioc/api-docs,https://dhpresentation.youruprise.com/fhir/ioc/openapi.json,https://dhpresentation.youruprise.com/fhir/ioc/swagger,https://dhpresentation.youruprise.com/fhir/ioc/swagger.json
+"Welligent, Part of the ContinuumCloud",True,False,https://fhir.qa.welligent.com/fhir/alleghanycountypublicschools/99/r4,https://fhir.qa.welligent.com/fhir/alleghanycountypublicschools/metadata,https://fhir.qa.welligent.com/fhir/.well-known/smart-configuration,https://fhir.qa.welligent.com/fhir/alleghanycountypublicschools/api-docs,https://fhir.qa.welligent.com/fhir/alleghanycountypublicschools/openapi.json,https://fhir.qa.welligent.com/fhir/alleghanycountypublicschools/swagger,https://fhir.qa.welligent.com/fhir/alleghanycountypublicschools/swagger.json
+Carefluence,True,False,https://admin.carefluence.com/r4core/,https://admin.carefluence.com/r4core/metadata,https://admin.carefluence.com/r4core/.well-known/smart-configuration,False,False,https://admin.carefluence.com/r4core/swagger,False
+"CareTracker, Inc.",True,False,https://ac-fhir.harrisambulatory.com/ac-5833/fhir/r4,https://ac-fhir.harrisambulatory.com/ac-1672/fhir/r4/metadata,https://ac-fhir.harrisambulatory.com/ac-1672/fhir/r4/.well-known/smart-configuration,False,False,https://ac-fhir.harrisambulatory.com/swagger,False
+CyberMed Corporation,True,False,https://api.cybermedehr.com/fhir/,https://api.cybermedehr.com/fhir/metadata,https://api.cybermedehr.com/.well-known/smart-configuration,False,False,https://api.cybermedehr.com/swagger,False
+"DigiDMS, Inc.",True,False,https://fhir.digidms.com/fhir,https://fhir.digidms.com/fhir/metadata,https://fhir.digidms.com/fhir/.well-known/smart-configuration,False,False,https://fhir.digidms.com/swagger,False
+Doc-tor.com,True,False,https://pic-fhir.harrisambulatory.com/TRICOUNTYPAIN-1318/fhir/r4,https://pic-fhir.harrisambulatory.com/BERNSTEIN-1828/fhir/r4/metadata,https://pic-fhir.harrisambulatory.com/BERNSTEIN-1828/fhir/r4/.well-known/smart-configuration,False,False,https://pic-fhir.harrisambulatory.com/swagger,False
+"DocToMe, Inc.",True,False,https://fhir.ethizo.com/api/4.0.0,https://fhir.ethizo.com/api/4.0.0/metadata,https://fhir.ethizo.com/api/4.0.0/.well-known/smart-configuration,False,False,https://fhir.ethizo.com/swagger,False
+"EHNOTE,INC",True,False,https://interop.ehnote.com/fhir/,https://interop.ehnote.com/fhir/metadata,https://interop.ehnote.com/fhir/.well-known/smart-configuration,False,False,https://interop.ehnote.com/fhir/swagger,False
+eMedPractice LLC,True,False,https://fhirbackup.emedpractice.com:8443/CapabilityStatement,https://fhirbackup.emedpractice.com:8443/metadata,https://fhirbackup.emedpractice.com:8443/.well-known/smart-configuration,False,False,https://fhirbackup.emedpractice.com:8443/swagger,False
+"Harris CareTracker, Inc",True,False,https://ct-fhir.harrisambulatory.com/ct-11502/fhir/r4,https://ct-fhir.harrisambulatory.com/ct-15240/fhir/r4/metadata,https://ct-fhir.harrisambulatory.com/ct-15240/fhir/r4/.well-known/smart-configuration,False,False,https://ct-fhir.harrisambulatory.com/swagger,False
+MaxRemind Inc,True,False,https://fhir.maximus.care/api/r4,https://fhir.maximus.care/api/r4/metadata,https://fhir.maximus.care/api/r4/.well-known/smart-configuration,False,False,https://fhir.maximus.care/swagger,False
+Medcare MSO,True,False,https://fhirapi.medcaremso.com/api/R4/21163,https://fhirapi.medcaremso.com/api/R4/metadata,https://fhirapi.medcaremso.com/api/R4/.well-known/smart-configuration,False,False,https://fhirapi.medcaremso.com/api/R4/swagger,False
+Mendelson Kornblum Orthopedic & Spine Specialists,True,False,https://fhir.mkoss.com/fhir,https://fhir.mkoss.com/fhir/metadata,https://fhir.mkoss.com/fhir/.well-known/smart-configuration,False,False,https://fhir.mkoss.com/swagger,False
+ModuleMD,True,False,https://mmdpcf.modulemd.com/cf.fhir.r4/,https://mmdpcf.modulemd.com/cf.fhir.r4/metadata,https://mmdpcf.modulemd.com/cf.fhir.r4/.well-known/smart-configuration,False,False,https://mmdpcf.modulemd.com/cf.fhir.r4/swagger,False
+PCIS GOLD,True,False,https://fhir.pcisgold.com/fhir,https://fhir.pcisgold.com/fhir/metadata,https://fhir.pcisgold.com/fhir/.well-known/smart-configuration,False,False,https://fhir.pcisgold.com/fhir/swagger,False
+Practice EHR LLC,True,False,https://fhir.practiceehr.com/,https://fhir.practiceehr.com/metadata,https://fhir.practiceehr.com/.well-known/smart-configuration,False,False,https://fhir.practiceehr.com/swagger,False
+"Pulse Systems, Inc",True,False,https://pul-fhir.harrisambulatory.com/PUL-030076/fhir/r4,https://pul-fhir.harrisambulatory.com/PUL-120012/fhir/r4/metadata,https://pul-fhir.harrisambulatory.com/PUL-120012/fhir/r4/.well-known/smart-configuration,False,False,https://pul-fhir.harrisambulatory.com/swagger,False
+"StreamlineMD, LLC",True,False,https://patientportal.streamlinemd.com/FHIRServer/FHIR,https://patientportal.streamlinemd.com/FHIRServer/FHIR/metadata,https://patientportal.streamlinemd.com/FHIRServer/FHIR/.well-known/smart-configuration,False,False,https://patientportal.streamlinemd.com/FHIRServer/swagger,False
+TriMed Technologies,True,False,https://fhir.trimed.cloud,https://fhir.trimed.cloud/fhir/r4/metadata,https://fhir.trimed.cloud/.well-known/smart-configuration,False,False,https://fhir.trimed.cloud/swagger,False
+"TruBridge, Inc.",True,False,https://fhir-usa.unify.chbase.com/org/grovehm-9736b438,https://fhir-usa.unify.chbase.com/metadata,https://fhir-usa.unify.chbase.com/.well-known/smart-configuration,False,False,https://fhir-usa.unify.chbase.com/swagger,False
+Unity Health,True,False,https://dev-fhir.cinch-project.com/fhir,https://dev-fhir.cinch-project.com/fhir/metadata,https://dev-fhir.cinch-project.com/fhir/.well-known/smart-configuration,https://dev-fhir.cinch-project.com/fhir/api-docs,False,False,False
+AdvancedMD,True,False,https://providerapi.advancedmd.com/v1/r4/50406,https://providerapi.advancedmd.com/v1/r4/metadata,https://providerapi.advancedmd.com/v1/r4/.well-known/smart-configuration,False,False,False,False
+agilon health inc.,True,False,https://product.mphrx.com/minerva/fhir/r4/,https://product.mphrx.com/minerva/fhir/r4/metadata,https://product.mphrx.com/minerva/fhir/r4/.well-known/smart-configuration,False,False,False,False
+"AllegianceMD Software, Inc.",True,False,https://fhir.allegiancemd.io/R4,https://fhir.allegiancemd.io/R4/metadata,https://fhir.allegiancemd.io/R4/.well-known/smart-configuration,False,False,False,False
+"Applied Research Works, Inc.",True,False,https://fhir.cozeva.com/4_0_0,https://fhir.cozeva.com/4_0_0/metadata,https://fhir.cozeva.com/4_0_0/.well-known/smart-configuration,False,False,False,False
+ASP.MD Inc.,True,False,https://fhirapi.asp.md:3030/aspmd/fhirserver/,https://fhirapi.asp.md:3030/aspmd/fhirserver/metadata,https://fhirapi.asp.md:3030/aspmd/fhirserver/.well-known/smart-configuration,False,False,False,False
+Avon Health,True,False,https://trial.avonhealth.com/fhir,https://trial.avonhealth.com/fhir/metadata,https://trial.avonhealth.com/fhir/.well-known/smart-configuration,False,False,False,False
+"Carbon Health Technologies, Inc.",True,False,https://api-gateway.alpha.awscarbonhealth.com/hapi-fhir/fhir,https://api-gateway.alpha.awscarbonhealth.com/hapi-fhir/fhir/metadata,https://api-gateway.alpha.awscarbonhealth.com/hapi-fhir/fhir/.well-known/smart-configuration,False,False,False,False
+Careexpand LLC,True,False,https://auth-api.dev.careexpandcloud.com/fhir,https://auth-api.dev.careexpandcloud.com/fhir/metadata,https://auth-api.dev.careexpandcloud.com/.well-known/smart-configuration,False,False,False,False
+"CureMD.com, Inc.",True,False,https://fhirendpoint.curemd.net/fhir/CMZGO,https://fhirendpoint.curemd.net/fhir/metadata,https://fhirendpoint.curemd.net/fhir/.well-known/smart-configuration,False,False,False,False
+CursaHealth LLC,True,False,https://fhirapi.cursahealth.com/r4,https://fhirapi.cursahealth.com/r4/metadata,False,False,False,https://fhirapi.cursahealth.com/swagger,False
+Cyfluent,True,False,https://www.cyfluentphr.com/fhirapi/HBSH/r4/,https://www.cyfluentphr.com/fhirapi/RClayton/r4/metadata,https://www.cyfluentphr.com/fhirapi/RClayton/r4/.well-known/smart-configuration,False,False,False,False
+Edvak Technologies Inc,True,False,https://fhir-dev.edvak.com/fhir,https://fhir-dev.edvak.com/fhir/metadata,https://fhir-dev.edvak.com/fhir/.well-known/smart-configuration,False,False,False,False
+ezEMRx Inc,True,False,https://services.ezemrx.com/ezEMRx/api-server/r4,https://services.ezemrx.com/ezEMRx/api-server/r4/metadata,https://services.ezemrx.com/ezEMRx/api-server/r4/.well-known/smart-configuration,False,False,False,False
+First Insight Corporation,True,False,https://fhir.maximeyes.com/api/cco/R4,https://fhir.maximeyes.com/api/drrparks/R4/metadata,https://fhir.maximeyes.com/api/drrparks/R4/.well-known/smart-configuration,False,False,False,False
+Flatiron Health,True,False,https://fhir.prod.flatiron.io/fhir,https://fhir.prod.flatiron.io/fhir/metadata,https://fhir.prod.flatiron.io/fhir/.well-known/smart-configuration,False,False,False,False
+"Foothold Technology, Inc.",True,False,https://fhir.footholdtechnology.com/ohi,https://fhir.footholdtechnology.com/demodb/metadata,https://fhir.footholdtechnology.com/.well-known/smart-configuration,False,False,False,False
+Genensys LLC,True,False,https://fhir.genensys.com/fhir,https://fhir.genensys.com/fhir/metadata,https://fhir.genensys.com/fhir/.well-known/smart-configuration,False,False,False,False
+"GeniusDoc, Inc.",True,False,https://api.geniusdoc.com:4434/GDAPIData,https://api.geniusdoc.com:4434/GDAPIData/metadata,https://api.geniusdoc.com:4434/GDAPIData/.well-known/smart-configuration,False,False,False,False
+"Health Care Systems, Inc.",True,False,https://hcswebportal.corporate.hcsinc.net/HCSClinicals_FHIR/api,https://hcswebportal.corporate.hcsinc.net/HCSClinicals_FHIR/api/metadata,https://hcswebportal.corporate.hcsinc.net/HCSClinicals_FHIR/api/.well-known/smart-configuration,False,False,False,False
+Healthie,True,False,https://app-70202.on-aptible.com/tenant/example-tenant/patient/smart-api,https://app-70202.on-aptible.com/metadata,https://app-70202.on-aptible.com/.well-known/smart-configuration,False,False,False,False
+Helixbeat,True,False,https://fusion.helixbeat.com/fhir/R4,https://fusion.helixbeat.com/fhir/R4/metadata,https://fusion.helixbeat.com/fhir/R4/.well-known/smart-configuration,False,False,False,False
+Inmediata Health Group LLC,True,False,https://www.secureemrplus.com/prognocis/fhir/gogogopediatric,https://www.secureemrplus.com/prognocis/fhir/neurocirugiadrlameiro/metadata,https://www.secureemrplus.com/prognocis/fhir/neurocirugiadrlameiro/.well-known/smart-configuration,False,False,False,False
+McKesson Specialty Health Technology Products LLC (Ontada),True,False,https://g2fhir.mckesson.com/xfhir,https://g2fhir.mckesson.com/xfhir/metadata,https://g2fhir.mckesson.com/xfhir/.well-known/smart-configuration,False,False,False,False
+"MD Synergy Solutions, LLC",True,False,https://altheafhir.mdsynergy.com,https://altheafhir.mdsynergy.com/metadata,https://altheafhir.mdsynergy.com/.well-known/smart-configuration,False,False,False,False
+"medent - Community Computer Service, Inc.",True,False,https://fhir.medent.com/fhir/R4/Jy8i1D6L,https://fhir.medent.com/fhir/R4/metadata,https://fhir.medent.com/fhir/R4/S8ck95b9/.well-known/smart-configuration,False,False,False,False
+"Medical Office Force, LLC.",True,False,https://mofapi.medicalofficeforce.co/fhir/,https://mofapi.medicalofficeforce.co/fhir/metadata,https://mofapi.medicalofficeforce.co/.well-known/smart-configuration,False,False,False,False
+"Navigating Cancer, LLC",True,False,https://api-portal.navigatingcare.com/tenant/12/patient/smart-api,https://api-portal.navigatingcare.com/metadata,https://api-portal.navigatingcare.com/.well-known/smart-configuration,False,False,False,False
+Netsmart Technologies,True,False,https://fhir.netsmartcloud.com/uscore/v1,https://fhir.netsmartcloud.com/provider/system-access/v2/ab41574f-0eb2-499d-ae49-5a4e6f763fc9/metadata,https://fhir.netsmartcloud.com/provider/system-access/v2/ab41574f-0eb2-499d-ae49-5a4e6f763fc9/.well-known/smart-configuration,False,False,False,False
+NextGen Healthcare,True,False,https://fhir.meditouchehr.com/api/fhir/r4,https://fhir.meditouchehr.com/api/fhir/metadata,https://fhir.meditouchehr.com/api/fhir/r4/.well-known/smart-configuration,False,False,False,False
+"NovoMedici, LLC",True,False,https://api.novoclinical.com/fhir,https://api.novoclinical.com/fhir/metadata,https://api.novoclinical.com/fhir/.well-known/smart-configuration,False,False,False,False
+"Practice Alternatives, Inc.",True,False,https://sandbox.pai.healthcare/preview/fhir,https://sandbox.pai.healthcare/preview/fhir/metadata,https://sandbox.pai.healthcare/preview/fhir/.well-known/smart-configuration,False,False,False,False
+"Sevocity, a division of Conceptual MindWorks, Inc",True,False,https://api.sevocity.com/api/patients/v1/SEVWFMC,https://api.sevocity.com/api/patients/v1/SEVGAP/metadata,https://api.sevocity.com/api/patients/v1/SEVGAP/.well-known/smart-configuration,False,False,False,False
+"Softbir, Inc.",True,False,https://fhir-dev.cloudmd365.com/api/v1/,https://fhir-dev.cloudmd365.com/api/v1/metadata,https://fhir-dev.cloudmd365.com/api/v1/.well-known/smart-configuration,False,False,False,False
+"TechSoft, Inc.",True,False,https://mdrfhirapi.mdronline.net/,https://mdrfhirapi.mdronline.net/metadata,https://mdrfhirapi.mdronline.net/.well-known/smart-configuration,False,False,False,False
+"Theoria Medical, PLLC",True,False,https://theoriamedical-api.charteasy.com/fhir,https://theoriamedical-api.charteasy.com/fhir/metadata,https://theoriamedical-api.charteasy.com/fhir/.well-known/smart-configuration,False,False,False,False
+Veradigm,True,False,https://api.veradigmview.com/fhir/fmh/r4/v1/e9fa642b-b110-41fa-bc7d-4ba3ccf24074,https://api.veradigmview.com/fhir/r4/v1/2f6b41e6-77d8-41c4-bf48-cad5cdd36494/metadata,https://api.veradigmview.com/fhir/r4/v1/2f6b41e6-77d8-41c4-bf48-cad5cdd36494/.well-known/smart-configuration,False,False,False,False
+WRS Health,True,False,https://fhir-server.sam.wrs.dev/r4,https://fhir-server.sam.wrs.dev/r4/metadata,https://fhir-server.sam.wrs.dev/r4/.well-known/smart-configuration,False,False,False,False
+"EyeMD EMR Healthcare Systems, Inc.",True,False,https://smartonfhir.myeyecarerecords.com/fhir/HUF301117,False,https://smartonfhir.myeyecarerecords.com/.well-known/smart-configuration,False,False,False,False
+InteliChart LLC,True,False,https://fhirapi.intelichart.com,False,False,False,False,https://fhirapi.intelichart.com/swagger,False
+"Qualifacts Systems, LLC",True,False,https://api.qualifacts.org/api/fhir/gcbhs/r4/,https://api.qualifacts.org/api/fhir/sheltercare/r4/metadata,False,False,False,False,False
+Advanced Data Systems Corporation,False,False,https://fhir-service.medicscloud.com/fhir/mc/adsc_KCy06Xlpc80TxHK,False,False,False,False,False,False
+Brilogy Corporation,False,False,https://axeium.net/,False,False,False,False,False,False
+DOX EMR,False,False,https://doxpodfhir-dmezayd2cbead2f8.centralus-01.azurewebsites.net/api/Endpoint/1214,False,False,False,False,False,False
+"Elation Health, Inc.",False,False,https://fhir.elationemr.com/,False,False,False,False,False,False
+EnableDoc LLC,False,False,https://api.enablemyhealth.com/,False,False,False,False,False,False
+"EndoSoft, LLC",False,False,https://fhirapi.endosoft.com/metadata,False,False,False,False,False,False
+"Health Systems Technology, Inc.",False,False,https://portal.viewmymed.com/fhir,False,False,False,False,False,False
+Indian Health Service,False,False,https://ihs4dhapim.ihs.gov/dev5/fhir/r4/,False,False,False,False,False,False
+"MedConnect, Inc.",False,False,https://api.medconnecthealth.com/fhir/medconnecthealth/afp/r4,False,False,False,False,False,False
+Office Practicum,False,False,https://applications.op.healthcare/,False,False,False,False,False,False
+Patient First,False,False,https://fhirapis-qa2.patientfirst.com/smart,False,False,False,False,False,False
 "1Life Healthcare, Inc",False,False,False,False,False,False,False,False,False
-Aarista Technology LLC,False,False,False,False,False,False,False,False,False
+1upHealth,False,False,False,False,False,False,False,False,False
 "Abeo Solutions, Inc",False,False,False,False,False,False,False,False,False
-"Acurus Solutions, Inc.",False,False,False,False,False,False,False,False,False
 "Adaptamed, LLC",False,False,False,False,False,False,False,False,False
-Advanced Data Systems Corporation,False,False,False,False,False,False,False,False,False
 "Agastha, Inc.",False,False,False,False,False,False,False,False,False
-"AllegianceMD Software, Inc.",False,False,False,False,False,False,False,False,False
 Altera Digital Health Inc.,False,False,False,False,False,False,False,False,False
-"Applied Research Works, Inc.",False,False,False,False,False,False,False,False,False
-ASP.MD Inc.,False,False,False,False,False,False,False,False,False
 "Astronaut, LLC",False,False,False,False,False,False,False,False,False
 "athenahealth, Inc.",False,False,False,False,False,False,False,False,False
-Axxess,False,False,False,False,False,False,False,False,False
-Azalea Health,False,False,False,False,False,False,False,False,False
 Benchmark Systems,False,False,False,False,False,False,False,False,False
 Bizmatics Inc.,False,False,False,False,False,False,False,False,False
 Braintree Health,False,False,False,False,False,False,False,False,False
-Brilogy Corporation,False,False,False,False,False,False,False,False,False
+Bridge Patient Portal Inc.,False,False,False,False,False,False,False,False,False
 BroadStreet Health LLC,False,False,False,False,False,False,False,False,False
 "Canvas Medical, Inc.",False,False,False,False,False,False,False,False,False
-"CareCloud Health, Inc.",False,False,False,False,False,False,False,False,False
 "CareEvolution, Inc.",False,False,False,False,False,False,False,False,False
-Careexpand LLC,False,False,False,False,False,False,False,False,False
-Carefluence,False,False,False,False,False,False,False,False,False
 Carepaths Inc,False,False,False,False,False,False,False,False,False
-"CareTracker, Inc.",False,False,False,False,False,False,False,False,False
-Cerner Corporation,False,False,False,False,False,False,False,False,False
 "ChartPath, LLC",False,False,False,False,False,False,False,False,False
 CHN Tech Solutions LLC,False,False,False,False,False,False,False,False,False
-"CitiusTech, Inc.",False,False,False,False,False,False,False,False,False
 "Claimpower, Inc.",False,False,False,False,False,False,False,False,False
 "CliniComp, Intl.",False,False,False,False,False,False,False,False,False
-CompuGroup Medical US,False,False,False,False,False,False,False,False,False
-Compulink Healthcare Solutions,False,False,False,False,False,False,False,False,False
 Comtron Inc.,False,False,False,False,False,False,False,False,False
-Darena Solutions LLC,False,False,False,False,False,False,False,False,False
-Doc-tor.com,False,False,False,False,False,False,False,False,False
+Core Solutions Inc,False,False,False,False,False,False,False,False,False
 "E*HealthLine.com, Inc.",False,False,False,False,False,False,False,False,False
 "eClinicalWorks, LLC",False,False,False,False,False,False,False,False,False
 eDerm Systems LLC,False,False,False,False,False,False,False,False,False
-Edvak Technologies Inc,False,False,False,False,False,False,False,False,False
 eHana,False,False,False,False,False,False,False,False,False
-"EHNOTE,INC",False,False,False,False,False,False,False,False,False
-"Elation Health, Inc.",False,False,False,False,False,False,False,False,False
-Elekta Inc.,False,False,False,False,False,False,False,False,False
-eMedPractice LLC,False,False,False,False,False,False,False,False,False
-"EndoSoft, LLC",False,False,False,False,False,False,False,False,False
 "EnSoftek, Inc",False,False,False,False,False,False,False,False,False
 Epic Systems Corporation,False,False,False,False,False,False,False,False,False
-"Eyefinity, Inc.",False,False,False,False,False,False,False,False,False
+"ezCaretech Co., Ltd.",False,False,False,False,False,False,False,False,False
 Firely USA Inc.,False,False,False,False,False,False,False,False,False
-First Insight Corporation,False,False,False,False,False,False,False,False,False
-"Foothold Technology, Inc.",False,False,False,False,False,False,False,False,False
-Genensys LLC,False,False,False,False,False,False,False,False,False
+Genius Solutions Inc.,False,False,False,False,False,False,False,False,False
 Glenwood Systems LLC,False,False,False,False,False,False,False,False,False
 "Greenway Health, LLC",False,False,False,False,False,False,False,False,False
-"Harris CareTracker, Inc",False,False,False,False,False,False,False,False,False
-"Healogics, Inc.",False,False,False,False,False,False,False,False,False
+HCRCM LLC,False,False,False,False,False,False,False,False,False
 "Health Care 2000, Inc.",False,False,False,False,False,False,False,False,False
-"Health Care Systems, Inc.",False,False,False,False,False,False,False,False,False
-"Health Information Management Systems, LLC",False,False,False,False,False,False,False,False,False
-"Health Samurai, Inc.",False,False,False,False,False,False,False,False,False
-"Health Systems Technology, Inc.",False,False,False,False,False,False,False,False,False
-Healthie,False,False,False,False,False,False,False,False,False
-Helixbeat,False,False,False,False,False,False,False,False,False
-"i3 Healthcare Solutions, LLC",False,False,False,False,False,False,False,False,False
 "iCare.com, Inc.",False,False,False,False,False,False,False,False,False
-Indian Health Service,False,False,False,False,False,False,False,False,False
-Inmediata Health Group LLC,False,False,False,False,False,False,False,False,False
+"Infinx Solutions, LLC",False,False,False,False,False,False,False,False,False
+Infor-Med Medical Information Systems Inc.,False,False,False,False,False,False,False,False,False
 InPracSys,False,False,False,False,False,False,False,False,False
 Kaiser Permanente/CIDS,False,False,False,False,False,False,False,False,False
 Kanrad Technologies Inc,False,False,False,False,False,False,False,False,False
 "Keiser Computers, Inc.",False,False,False,False,False,False,False,False,False
-"Lille Group, Inc.",False,False,False,False,False,False,False,False,False
+"Lunar Systems, Inc.",False,False,False,False,False,False,False,False,False
+Magilen Enterprises Inc,False,False,False,False,False,False,False,False,False
 MassLight,False,False,False,False,False,False,False,False,False
-McKesson Specialty Health Technology Products LLC (Ontada),False,False,False,False,False,False,False,False,False
 "MD Charts, LLC",False,False,False,False,False,False,False,False,False
 "MD Logic, Inc.",False,False,False,False,False,False,False,False,False
 "MDFlow EHR, LLC DBA: MDFlow Systems",False,False,False,False,False,False,False,False,False
 MDLAND,False,False,False,False,False,False,False,False,False
 MDOfficeManager,False,False,False,False,False,False,False,False,False
-"MEDENT - Community Computer Service, Inc.",False,False,False,False,False,False,False,False,False
+"MedAZ.Net, LLC",False,False,False,False,False,False,False,False,False
 MEDHOST,False,False,False,False,False,False,False,False,False
-"Medi-EHR, LLC",False,False,False,False,False,False,False,False,False
 Medical Informatics Engineering,False,False,False,False,False,False,False,False,False
-"Medical Information Technology, Inc. (MEDITECH)",False,False,False,False,False,False,False,False,False
 MedicalMine Inc.,False,False,False,False,False,False,False,False,False
 "MedicaSoft, LLC",False,False,False,False,False,False,False,False,False
-"Medicus Clinical, LLC",False,False,False,False,False,False,False,False,False
-"MediFusion, LLC",False,False,False,False,False,False,False,False,False
 MedOne Healthcare Partners,False,False,False,False,False,False,False,False,False
 MedPharm Services LLC,False,False,False,False,False,False,False,False,False
 Medplum,False,False,False,False,False,False,False,False,False
+Meridian Medical Management,False,False,False,False,False,False,False,False,False
 Metasolutions Inc,False,False,False,False,False,False,False,False,False
 "MicroFour, Inc.",False,False,False,False,False,False,False,False,False
-"MicroMD, LLC",False,False,False,False,False,False,False,False,False
-"Modernizing Medicine Gastroenterology, LLC",False,False,False,False,False,False,False,False,False
-ModuleMD,False,False,False,False,False,False,False,False,False
+Modernizing Medicine Inc.,False,False,False,False,False,False,False,False,False
 "Moyae, Inc.",False,False,False,False,False,False,False,False,False
 "NaphCare, Inc.",False,False,False,False,False,False,False,False,False
-"Navigating Cancer, LLC",False,False,False,False,False,False,False,False,False
-Netsmart Technologies,False,False,False,False,False,False,False,False,False
 Nextech,False,False,False,False,False,False,False,False,False
-NextGen Healthcare,False,False,False,False,False,False,False,False,False
-"NovoMedici, LLC",False,False,False,False,False,False,False,False,False
 "Nth Technologies, Inc.",False,False,False,False,False,False,False,False,False
 "Objective Medical Systems, LLC",False,False,False,False,False,False,False,False,False
 OmniMD Inc.,False,False,False,False,False,False,False,False,False
+OpenEMR Foundation,False,False,False,False,False,False,False,False,False
+Oracle Health,False,False,False,False,False,False,False,False,False
 "OT EMR, Inc.",False,False,False,False,False,False,False,False,False
 Patagonia Health,False,False,False,False,False,False,False,False,False
 PCE Systems,False,False,False,False,False,False,False,False,False
-PCIS GOLD,False,False,False,False,False,False,False,False,False
+"Physicians EMR, LLC",False,False,False,False,False,False,False,False,False
 PointClickCare Technologies Inc.,False,False,False,False,False,False,False,False,False
-"Practice Alternatives, Inc.",False,False,False,False,False,False,False,False,False
-Practice EHR LLC,False,False,False,False,False,False,False,False,False
 Practice Fusion,False,False,False,False,False,False,False,False,False
 "PracticeSuite, Inc.",False,False,False,False,False,False,False,False,False
-"Prime Clinical Systems, Inc.",False,False,False,False,False,False,False,False,False
-Procentive,False,False,False,False,False,False,False,False,False
-"Pulse Systems, Inc",False,False,False,False,False,False,False,False,False
-"Qualifacts Systems, LLC",False,False,False,False,False,False,False,False,False
+"Prime DataQ Health, LLC",False,False,False,False,False,False,False,False,False
 "Radysans, Inc",False,False,False,False,False,False,False,False,False
 "ReLi Med Solutions, LLC",False,False,False,False,False,False,False,False,False
 "Royal Health, Inc.",False,False,False,False,False,False,False,False,False
-Saisystems International,False,False,False,False,False,False,False,False,False
-Smile CDR Inc. (doing business as Smile Digital Health),False,False,False,False,False,False,False,False,False
-"Softbir, Inc.",False,False,False,False,False,False,False,False,False
-"Sophrona Solutions, Inc.",False,False,False,False,False,False,False,False,False
+Sai Systems Digital LLC,False,False,False,False,False,False,False,False,False
+Sargas Pharmaceutical Adherence and Compliance International,False,False,False,False,False,False,False,False,False
+"SMARTMD Technologies, Inc.",False,False,False,False,False,False,False,False,False
+"SolidPractice Technologies, LLC",False,False,False,False,False,False,False,False,False
 "Strateq Health, Inc.",False,False,False,False,False,False,False,False,False
-"StreamlineMD, LLC",False,False,False,False,False,False,False,False,False
 Systemedx Inc,False,False,False,False,False,False,False,False,False
-"Tebra Technologies, Inc.",False,False,False,False,False,False,False,False,False
-TenEleven Group,False,False,False,False,False,False,False,False,False
 Tenzing Medical LLC,False,False,False,False,False,False,False,False,False
 The Echo Group,False,False,False,False,False,False,False,False,False
 TRIARQ Practice Services,False,False,False,False,False,False,False,False,False
-TriMed Technologies,False,False,False,False,False,False,False,False,False
-TronsHealth LLC,False,False,False,False,False,False,False,False,False
+Unknown,False,False,False,False,False,False,False,False,False
 "US Monitoring, Inc.",False,False,False,False,False,False,False,False,False
-Varian Medical Systems,False,False,False,False,False,False,False,False,False
-Veradigm,False,False,False,False,False,False,False,False,False
 VersaSuite,False,False,False,False,False,False,False,False,False
 "VIPA Health Solutions, LLC",False,False,False,False,False,False,False,False,False
 Vision Infonet Inc,False,False,False,False,False,False,False,False,False
 "Vohra Wound Physicians Management, LLC",False,False,False,False,False,False,False,False,False
 "WEBeDoctor, Inc.",False,False,False,False,False,False,False,False,False
-"Welligent, Part of the ContinuumCloud",False,False,False,False,False,False,False,False,False
-Willowglade Technologies Corporation,False,False,False,False,False,False,False,False,False
 Zoobook Systems LLC,False,False,False,False,False,False,False,False,False
