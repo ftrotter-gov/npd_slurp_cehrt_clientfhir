@@ -135,13 +135,13 @@ def aggregate_vendor_compliance(enriched_path, org_to_npi_path, vendor_map):
                     org_to_npi[vendor].append((org_url, npi))
 
     # 2. Parse enriched_endpoints.csv
+    # NOTE: Now using vendor_name directly from enriched_endpoints.csv instead of mapping domains
     org_in_enriched = {}
     with open(enriched_path, newline='', encoding='utf-8') as f:
         reader = csv.DictReader(f)
         for row in reader:
             org_url = row.get("org_fhir_url", "").strip()
-            base = get_base_domain(org_url)
-            vendor = vendor_map.get(base, "Unknown, missing from list_sources_summary.csv")
+            vendor = row.get("vendor_name", "").strip() or "Unknown, missing vendor_name in enriched_endpoints"
             if vendor not in org_in_enriched:
                 org_in_enriched[vendor] = set()
             org_in_enriched[vendor].add(org_url)
@@ -150,12 +150,12 @@ def aggregate_vendor_compliance(enriched_path, org_to_npi_path, vendor_map):
     vendor_results = {}
 
     # Vendors with orgs in enriched_endpoints.csv (normal logic)
+    # NOTE: Now using vendor_name directly from enriched_endpoints.csv instead of mapping domains
     with open(enriched_path, newline='', encoding='utf-8') as f:
         reader = csv.DictReader(f)
         for row in reader:
             org_url = row.get("org_fhir_url", "").strip()
-            base = get_base_domain(org_url)
-            vendor = vendor_map.get(base, "Unknown, missing from list_sources_summary.csv")
+            vendor = row.get("vendor_name", "").strip() or "Unknown, missing vendor_name in enriched_endpoints"
             if vendor not in vendor_results:
                 # Initialize with empty strings for URLs, False for boolean checks
                 vendor_results[vendor] = {

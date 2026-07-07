@@ -279,6 +279,7 @@ class EndpointDiscovery:
                 row = {
                     'org_fhir_url': org_fhir_url,
                     'npi': npi,
+                    'vendor_name': org_name,
                     'https_org_url': https_org_url,
                     'capability_url': endpoints.get('capability_url', 'Error - failed to find capability url'),
                     'smart_url': endpoints.get('smart_url', 'Error - failed to find smart url'),
@@ -304,7 +305,7 @@ class EndpointDiscovery:
             return
         
         try:
-            fieldnames = ['org_fhir_url', 'npi', 'https_org_url', 'capability_url', 'smart_url', 
+            fieldnames = ['org_fhir_url', 'npi', 'vendor_name', 'https_org_url', 'capability_url', 'smart_url', 
                          'openapi_docs_url', 'openapi_json_url', 'swagger_url', 'swagger_json_url']
             
             with open(output_file, 'w', newline='', encoding='utf-8') as csvfile:

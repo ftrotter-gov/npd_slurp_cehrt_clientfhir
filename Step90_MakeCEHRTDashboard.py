@@ -239,17 +239,13 @@ def main():
         for row in reader:
             vendor_results.append(row)
 
-    one_space = '&nbsp;'
-    how_many_spaces = 15
-    the_spaces = one_space * how_many_spaces
-
-    # HTML table header
+    # HTML table header with CSS classes for compression
     html = []
     html.append("<table>")
     html.append("  <thead>")
     html.append("    <tr>")
     for col in vendor_results[0].keys():
-        html.append(f"      <th>{the_spaces}<br>{col}</th>")
+        html.append(f"      <th class=\"header-col\">{col}</th>")
     html.append("    </tr>")
     html.append("  </thead>")
     html.append("  <tbody>")
@@ -283,21 +279,31 @@ def main():
                 
                 if is_url:
                     # Make icon clickable link to the actual endpoint
-                    html.append(f'      <td style="text-align:center; vertical-align:middle;">'
-                                f'<a href="{val}" target="_blank" rel="noopener noreferrer">'
+                    html.append(f'      <td class="center-cell">'
+                                f'<a href="{val}">'
                                 f'<img src="{icon_path}" alt="{alt_text}" title="Click to visit: {val}" ></a></td>')
                 else:
                     # Regular icon without link
-                    html.append(f'      <td style="text-align:center; vertical-align:middle;">'
+                    html.append(f'      <td class="center-cell">'
                                 f'<img src="{icon_path}" alt="{alt_text}" title="{alt_text}" ></td>')
         html.append("    </tr>")
     html.append("  </tbody>")
     html.append("</table>")
 
-    # Write to file
+    # Write to file with CSS for compression
     with open(output_path, "w", encoding="utf-8") as f:
         f.write("# CEHRT FHIR Vendor Compliance Dashboard\n\n")
         f.write("This dashboard lists CEHRT vendors in order of their compliance with a scrappable FHIR ecosystem. Each column represents a compliance check, and each cell shows a shield.io badge indicating pass (green) or fail (red).\n\n")
+        # Add CSS styles for compression
+        f.write("<style>\n")
+        f.write(".center-cell {\n")
+        f.write("  text-align: center;\n")
+        f.write("  vertical-align: middle;\n")
+        f.write("}\n")
+        f.write(".header-col {\n")
+        f.write("  white-space: nowrap;\n")
+        f.write("}\n")
+        f.write("</style>\n\n")
         for line in html:
             f.write(line + "\n")
 
