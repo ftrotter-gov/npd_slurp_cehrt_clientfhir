@@ -62,9 +62,9 @@ class EndpointDiscovery:
         """Load endpoint and NPI data from Step 45 output files"""
         data = []
         
-        # Read endpoint_instance.csv
-        endpoint_file = Path(input_dir) / 'endpoint_instance.csv'
-        npi_file = Path(input_dir) / 'npd_endpoint_instance_to_other_id.csv'
+        # Read endpoint_instance.csv from fhir_analysis directory (has full metadata)
+        endpoint_file = Path(input_dir) / 'fhir_analysis' / 'endpoint_instance.csv'
+        npi_file = Path(input_dir) / 'fhir_analysis' / 'endpoint_to_npi.csv'
         
         if not endpoint_file.exists():
             logger.error(f"Endpoint file not found: {endpoint_file}")
@@ -77,11 +77,13 @@ class EndpointDiscovery:
                 with open(npi_file, 'r', newline='', encoding='utf-8') as csvfile:
                     reader = csv.DictReader(csvfile)
                     for row in reader:
-                        endpoint_uuid = row.get('npd_endpoint_instance_uuid', '').strip()
+                        # Updated column names to match actual CSV structure
+                        endpoint_uuid = row.get('endpoint_instance_id', '').strip()
                         other_id = row.get('other_id', '').strip()
-                        id_type = row.get('other_id_type', '').strip()
+                        system = row.get('system', '').strip()
                         
-                        if endpoint_uuid and other_id and id_type == 'NPI':
+                        # Check if this is an NPI (system contains 'us-npi')
+                        if endpoint_uuid and other_id and 'us-npi' in system.lower():
                             if endpoint_uuid not in npi_map:
                                 npi_map[endpoint_uuid] = []
                             npi_map[endpoint_uuid].append(other_id)

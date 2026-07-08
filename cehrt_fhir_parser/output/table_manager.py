@@ -114,13 +114,62 @@ class PostgreSQLTableManager:
                     print(f"Skipping deduplication for {table_name}")
     
     def export_csv_files(self, *, output_dir: Path):
-        """Export all tables as PostgreSQL-ready CSV files"""
+        """Export all tables as PostgreSQL-ready CSV files with organized subdirectories"""
         output_dir.mkdir(parents=True, exist_ok=True)
         
+        # Create subdirectories for organized output
+        fhir_dir = output_dir / 'fhir_analysis'
+        npd_dir = output_dir / 'npd_compliant'
+        fhir_dir.mkdir(exist_ok=True)
+        npd_dir.mkdir(exist_ok=True)
+        
         exported_files = []
+        
+        # Define which tables go where
+        fhir_tables = {
+            'ehr_vendor', 'organization', 'endpoint_instance', 
+            'endpoint_instance_to_other_id', 'endpoint_instance_to_payload',
+            'endpoint_connection_type', 'environment_type',
+            'data_lineage', 'field_coverage_log',
+            'fhir_organization_address', 'fhir_organization_phone',
+            'fhir_organization_email', 'fhir_organization_contact_url'
+        }
+        
+        npd_tables = {
+            'npd_ehr_vendor', 'npd_endpoint_connection_type', 'npd_environment_type',
+            'npd_endpoint_instance', 'npd_endpoint_instance_to_other_id',
+            'npd_endpoint_instance_to_payload', 'npd_organization',
+            'npd_organization_to_address', 'npd_organization_to_phone',
+            'npd_address_us', 'npd_address_international', 'npd_address_nonstandard',
+            'npd_address', 'npd_fhir_address_use', 'npd_fhir_email_use',
+            'npd_fhir_name_use', 'npd_fhir_phone_system', 'npd_fhir_phone_use',
+            'npd_payload_type', 'npd_mime_type'
+        }
+        
         for table_name, df in self.tables.items():
             if not df.empty:
-                csv_path = output_dir / f"{table_name}.csv"
+                # Determine output directory and apply naming conventions
+                if table_name in fhir_tables:
+                    target_dir = fhir_dir
+                    # Rename for clarity
+                    if table_name == 'endpoint_instance_to_other_id':
+                        filename = 'endpoint_to_npi.csv'
+                    else:
+                        filename = f"{table_name}.csv"
+                elif table_name in npd_tables:
+                    target_dir = npd_dir
+                    # Rename for clarity
+                    if table_name == 'npd_endpoint_instance_to_other_id':
+                        filename = 'endpoint_to_npi.csv'
+                    else:
+                        # Strip npd_ prefix for cleaner filenames in npd directory
+                        filename = f"{table_name.replace('npd_', '')}.csv"
+                else:
+                    # Unknown table, put in root
+                    target_dir = output_dir
+                    filename = f"{table_name}.csv"
+                
+                csv_path = target_dir / filename
                 df.to_csv(
                     csv_path, 
                     index=False, 
