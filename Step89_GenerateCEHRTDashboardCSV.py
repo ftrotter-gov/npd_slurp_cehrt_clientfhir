@@ -1,24 +1,24 @@
 #!/usr/bin/env python3
 """
-Step89_GenerateCEHRTDashboardCSV.py
+Step89_GenerateCEHRTDashboardCSV_v2.py
 
-Generates a CSV file (CEHRT_FHIR_Report.csv) with compliance results for each CEHRT vendor.
+SIMPLIFIED VERSION - Uses vendor_name directly from enriched_endpoints.csv
+
+Generates a CSV file (CEHRT_FHIR_Report.csv) with compliance results aggregated by EHR vendor.
 This file is used as input for the dashboard markdown generator.
 
-- Reads local_data/prod_data/list_sources_summary.csv for vendor info.
-- Reads data/output_data/enriched_endpoints.csv for endpoint compliance.
-- Reads data/output_data/normalized_csv_files/org_to_npi.csv for partial compliance.
-- Aggregates compliance per vendor.
+- Reads data/output_data/enriched_endpoints.csv for endpoint compliance
+- Aggregates compliance per vendor using the vendor_name column directly
+- No HTTP requests, no domain mapping - just pure aggregation
 
-Columns: Vendor, Reachable, Has ONPI, HTTPS ORG URL, Findable Metadata, Findable SMART, Findable OpenAPI Docs, Findable OpenAPI JSON, Findable Swagger, Findable Swagger JSON
+Columns: Vendor, Reachable, Has ONPI, HTTPS ORG URL, Findable Metadata, Findable SMART, 
+         Findable OpenAPI Docs, Findable OpenAPI JSON, Findable Swagger, Findable Swagger JSON
 """
 
 import csv
-import os
 import argparse
-from urllib.parse import urlparse
 import re
-import requests
+from collections import Counter
 
 CHECKS = [
     ("Reachable", "reachable"),
@@ -32,132 +32,119 @@ CHECKS = [
     ("Findable Swagger JSON", "swagger_json_url"),
 ]
 
-def get_base_domain(url):
-    try:
-        parsed = urlparse(url)
-        return f"{parsed.scheme}://{parsed.netloc}"
-    except Exception:
-        return url
-
-def load_vendor_mapping(list_sources_path):
-    mapping = {}
-    with open(list_sources_path, newline='', encoding='utf-8') as f:
-        reader = csv.DictReader(f)
-        for row in reader:
-            list_source = row.get("list_source", "").strip()
-            vendor = row.get("api_developer_name", "").strip()
-            if list_source.startswith("http"):
-                base = get_base_domain(list_source)
-                mapping[base] = vendor if vendor else "Unknown, missing from list_sources_summary.csv"
-    return mapping
-
 def is_valid_npi(npi_value):
-    return bool(re.match(r'^\d{10}$', npi_value.strip()))
+    """Check if NPI is a valid 10-digit number"""
+    return bool(re.match(r'^\d{10}$', str(npi_value).strip()))
 
 def is_valid_https_url(url):
-    return url.strip().startswith('https://')
+    """Check if URL starts with https://"""
+    return str(url).strip().startswith('https://')
 
-def is_domain_responsive(base_domain):
-    try:
-        response = requests.get(base_domain, timeout=10, allow_redirects=True)
-        return 200 <= response.status_code < 500
-    except Exception:
-        return False
+def is_valid_url(url):
+    """Check if URL starts with http:// or https://"""
+    url_str = str(url).strip()
+    return url_str.startswith('http://') or url_str.startswith('https://')
 
 def check_reachable(row):
-    for col in [
-        "capability_url", "smart_url", "openapi_docs_url",
-        "openapi_json_url", "swagger_url", "swagger_json_url"
-    ]:
-        if row.get(col, "").startswith("http"):
+    """Check if any endpoint URL is reachable (has a valid URL)"""
+    for col in ["capability_url", "smart_url", "openapi_docs_url",
+                "openapi_json_url", "swagger_url", "swagger_json_url"]:
+        if is_valid_url(row.get(col, "")):
             return True
     return False
 
 def check_has_onpi(row):
+    """Check if NPI is present and valid"""
     npi = row.get("npi", "").strip()
     return is_valid_npi(npi)
 
 def check_https_org_url(row):
-    """Return the https_org_url if available, otherwise check if org_fhir_url is HTTPS"""
+    """Check if org URL is HTTPS"""
     https_org_url = row.get("https_org_url", "").strip()
-    if https_org_url and https_org_url.startswith("http"):
+    if is_valid_https_url(https_org_url):
         return https_org_url
     
-    # Fallback to original logic if https_org_url column is not available
+    # Fallback to org_fhir_url
     org_fhir_url = row.get("org_fhir_url", "").strip()
-    if org_fhir_url.startswith("https://"):
+    if is_valid_https_url(org_fhir_url):
         return org_fhir_url
     
     return ""
 
 def check_endpoint_found(row, col):
-    return row.get(col, "").startswith("http")
+    """Check if endpoint URL is found and valid"""
+    return is_valid_url(row.get(col, ""))
 
-def aggregate_vendor_compliance(enriched_path, org_to_npi_path, vendor_map):
-    # 1. Parse org_to_npi data
-    # If org_to_npi_path doesn't exist or is empty, extract from enriched_endpoints
-    org_to_npi = {}
+def clean_vendor_name(vendor_name_with_hash):
+    """
+    Remove hash suffix from vendor names.
+    Example: athenahealth_inc_53f1f907e6919c0dd81ced0591b93f43 -> athenahealth_inc
+    """
+    if not vendor_name_with_hash:
+        return "Unknown"
     
-    use_enriched_for_npi = False
-    if not org_to_npi_path or not os.path.exists(org_to_npi_path):
-        print("Note: org_to_npi.csv not found, will extract NPI data from enriched_endpoints.csv")
-        use_enriched_for_npi = True
-    else:
-        # Try to read legacy org_to_npi.csv
-        try:
-            with open(org_to_npi_path, newline='', encoding='utf-8') as f:
-                reader = csv.DictReader(f)
-                for row in reader:
-                    org_id = row.get("org_id", "").strip()
-                    npi_value = row.get("npi_value", "").strip()
-                    base = get_base_domain(org_id)
-                    vendor = vendor_map.get(base, "Unknown, missing from list_sources_summary.csv")
-                    if vendor not in org_to_npi:
-                        org_to_npi[vendor] = []
-                    org_to_npi[vendor].append((org_id, npi_value))
-        except Exception as e:
-            print(f"Warning: Could not read org_to_npi.csv: {e}")
-            print("Will extract NPI data from enriched_endpoints.csv instead")
-            use_enriched_for_npi = True
-    
-    # If we need to extract from enriched_endpoints, do it now
-    if use_enriched_for_npi:
-        with open(enriched_path, newline='', encoding='utf-8') as f:
-            reader = csv.DictReader(f)
-            for row in reader:
-                org_url = row.get("org_fhir_url", "").strip()
-                npi = row.get("npi", "").strip()
-                if org_url:  # Only process if we have a URL
-                    base = get_base_domain(org_url)
-                    vendor = vendor_map.get(base, "Unknown, missing from list_sources_summary.csv")
-                    if vendor not in org_to_npi:
-                        org_to_npi[vendor] = []
-                    org_to_npi[vendor].append((org_url, npi))
+    # Split by underscore and check if last part is a hash (32 hex chars)
+    parts = vendor_name_with_hash.rsplit('_', 1)
+    if len(parts) == 2 and len(parts[1]) == 32 and all(c in '0123456789abcdef' for c in parts[1]):
+        return parts[0]
+    return vendor_name_with_hash
 
-    # 2. Parse enriched_endpoints.csv
-    # NOTE: Now using vendor_name directly from enriched_endpoints.csv instead of mapping domains
-    org_in_enriched = {}
-    with open(enriched_path, newline='', encoding='utf-8') as f:
-        reader = csv.DictReader(f)
-        for row in reader:
-            org_url = row.get("org_fhir_url", "").strip()
-            vendor = row.get("vendor_name", "").strip() or "Unknown, missing vendor_name in enriched_endpoints"
-            if vendor not in org_in_enriched:
-                org_in_enriched[vendor] = set()
-            org_in_enriched[vendor].add(org_url)
-
-    # 3. Aggregate compliance - now storing URLs for endpoint checks
+def aggregate_vendor_compliance(enriched_path):
+    """
+    Aggregate compliance results by vendor using vendor_name column directly.
+    Returns a dict: clean_vendor_name -> {check_name: value, ...}
+    """
     vendor_results = {}
-
-    # Vendors with orgs in enriched_endpoints.csv (normal logic)
-    # NOTE: Now using vendor_name directly from enriched_endpoints.csv instead of mapping domains
+    vendor_name_mapping = {}  # Track hash -> clean name mapping
+    
+    print(f"Reading enriched_endpoints from: {enriched_path}")
+    
+    # First pass: collect all vendor names and count occurrences of clean names
+    vendor_hash_to_clean = {}
+    clean_name_counts = Counter()
+    
     with open(enriched_path, newline='', encoding='utf-8') as f:
         reader = csv.DictReader(f)
         for row in reader:
-            org_url = row.get("org_fhir_url", "").strip()
-            vendor = row.get("vendor_name", "").strip() or "Unknown, missing vendor_name in enriched_endpoints"
+            vendor_hash = row.get("vendor_name", "").strip()
+            if vendor_hash:
+                clean_name = clean_vendor_name(vendor_hash)
+                vendor_hash_to_clean[vendor_hash] = clean_name
+                clean_name_counts[clean_name] += 1
+    
+    # Create final vendor names with numeric suffixes for duplicates
+    clean_name_usage = Counter()
+    final_vendor_names = {}
+    
+    for vendor_hash, clean_name in vendor_hash_to_clean.items():
+        if clean_name_counts[clean_name] > 1:
+            # Multiple vendors with same clean name
+            clean_name_usage[clean_name] += 1
+            if clean_name_usage[clean_name] == 1:
+                final_name = clean_name
+            else:
+                final_name = f"{clean_name}_{clean_name_usage[clean_name]}"
+        else:
+            final_name = clean_name
+        final_vendor_names[vendor_hash] = final_name
+    
+    # Second pass: aggregate data
+    with open(enriched_path, newline='', encoding='utf-8') as f:
+        reader = csv.DictReader(f)
+        row_count = 0
+        
+        for row in reader:
+            row_count += 1
+            
+            # Get vendor name and convert to clean name
+            vendor_hash = row.get("vendor_name", "").strip()
+            if not vendor_hash:
+                vendor = "Unknown"
+            else:
+                vendor = final_vendor_names.get(vendor_hash, clean_vendor_name(vendor_hash))
+            
+            # Initialize vendor if not seen before
             if vendor not in vendor_results:
-                # Initialize with empty strings for URLs, False for boolean checks
                 vendor_results[vendor] = {
                     "Reachable": False,
                     "Has ONPI": False,
@@ -169,115 +156,56 @@ def aggregate_vendor_compliance(enriched_path, org_to_npi_path, vendor_map):
                     "Findable Swagger": "",
                     "Findable Swagger JSON": ""
                 }
-
-            # Update boolean checks
+            
+            # Update boolean checks (any TRUE makes it TRUE for the vendor)
             if check_reachable(row):
                 vendor_results[vendor]["Reachable"] = True
             if check_has_onpi(row):
                 vendor_results[vendor]["Has ONPI"] = True
             
-            # Update HTTPS ORG URL - store the actual URL if found
+            # Update HTTPS ORG URL - store the actual URL if found (first one wins)
             https_org_url = check_https_org_url(row)
-            if https_org_url:
+            if https_org_url and not vendor_results[vendor]["HTTPS ORG URL"]:
                 vendor_results[vendor]["HTTPS ORG URL"] = https_org_url
             
-            # Update URL checks - store the actual URL if found
-            if check_endpoint_found(row, "capability_url"):
+            # Update endpoint URLs - store the actual URL if found (first one wins)
+            if check_endpoint_found(row, "capability_url") and not vendor_results[vendor]["Findable Metadata"]:
                 vendor_results[vendor]["Findable Metadata"] = row.get("capability_url", "")
-            if check_endpoint_found(row, "smart_url"):
+            if check_endpoint_found(row, "smart_url") and not vendor_results[vendor]["Findable SMART"]:
                 vendor_results[vendor]["Findable SMART"] = row.get("smart_url", "")
-            if check_endpoint_found(row, "openapi_docs_url"):
+            if check_endpoint_found(row, "openapi_docs_url") and not vendor_results[vendor]["Findable OpenAPI Docs"]:
                 vendor_results[vendor]["Findable OpenAPI Docs"] = row.get("openapi_docs_url", "")
-            if check_endpoint_found(row, "openapi_json_url"):
+            if check_endpoint_found(row, "openapi_json_url") and not vendor_results[vendor]["Findable OpenAPI JSON"]:
                 vendor_results[vendor]["Findable OpenAPI JSON"] = row.get("openapi_json_url", "")
-            if check_endpoint_found(row, "swagger_url"):
+            if check_endpoint_found(row, "swagger_url") and not vendor_results[vendor]["Findable Swagger"]:
                 vendor_results[vendor]["Findable Swagger"] = row.get("swagger_url", "")
-            if check_endpoint_found(row, "swagger_json_url"):
+            if check_endpoint_found(row, "swagger_json_url") and not vendor_results[vendor]["Findable Swagger JSON"]:
                 vendor_results[vendor]["Findable Swagger JSON"] = row.get("swagger_json_url", "")
-
-    # Vendors with orgs in org_to_npi.csv but not in enriched_endpoints.csv
-    for vendor in org_to_npi:
-        if vendor not in vendor_results:
-            reachable = False
-            has_onpi = False
-            https_org_url = ""
-            for org_id, npi_value in org_to_npi[vendor]:
-                base_domain = get_base_domain(org_id)
-                if is_domain_responsive(base_domain):
-                    reachable = True
-                if is_valid_npi(npi_value):
-                    has_onpi = True
-                if is_valid_https_url(org_id):
-                    https_org_url = org_id  # Store the actual URL, not just True
-            vendor_results[vendor] = {
-                "Reachable": reachable,
-                "Has ONPI": has_onpi,
-                "HTTPS ORG URL": https_org_url,
-                "Findable Metadata": "",
-                "Findable SMART": "",
-                "Findable OpenAPI Docs": "",
-                "Findable OpenAPI JSON": "",
-                "Findable Swagger": "",
-                "Findable Swagger JSON": ""
-            }
-
-    # Vendors in vendor_map but not in either file: all fail
-    for vendor in set(vendor_map.values()):
-        if vendor not in vendor_results:
-            vendor_results[vendor] = {
-                "Reachable": False,
-                "Has ONPI": False,
-                "HTTPS ORG URL": "",
-                "Findable Metadata": "",
-                "Findable SMART": "",
-                "Findable OpenAPI Docs": "",
-                "Findable OpenAPI JSON": "",
-                "Findable Swagger": "",
-                "Findable Swagger JSON": ""
-            }
-
+    
+    print(f"Processed {row_count} rows")
+    print(f"Found {len(vendor_results)} unique vendors")
+    
     return vendor_results
 
 def main():
-    parser = argparse.ArgumentParser(description='Generate CEHRT Dashboard CSV')
-    parser.add_argument('--list_sources_path', required=True, help='Path to list_sources_summary.csv file')
+    parser = argparse.ArgumentParser(description='Generate CEHRT Dashboard CSV (Simplified Version)')
     parser.add_argument('--enriched_endpoints_path', required=True, help='Path to enriched_endpoints.csv file')
     parser.add_argument('--output_csv_path', required=True, help='Path to output CSV file')
     
     args = parser.parse_args()
     
-    list_sources_path = args.list_sources_path
     enriched_path = args.enriched_endpoints_path
     output_csv = args.output_csv_path
-    org_to_npi_path = None  # No longer used - data comes from enriched_endpoints.csv
-
-    print("Loading vendor mapping from local_data/prod_data/list_sources_summary.csv...")
-    vendor_map = load_vendor_mapping(list_sources_path)
-    print(f"Loaded {len(vendor_map)} vendor base domains.")
-
-    # Check if org_to_npi.csv exists (optional - will extract from enriched_endpoints if not)
-    if org_to_npi_path and os.path.exists(org_to_npi_path):
-        print("Parsing org_to_npi.csv for partial compliance info...")
-        with open(org_to_npi_path, newline='', encoding='utf-8') as f:
-            org_to_npi_count = sum(1 for _ in f) - 1
-        print(f"Found {org_to_npi_count} org_id rows in org_to_npi.csv.")
-    else:
-        print("Note: org_to_npi.csv not found - will extract NPI data from enriched_endpoints.csv")
-
-    print("Parsing enriched_endpoints.csv for endpoint compliance info...")
-    with open(enriched_path, newline='', encoding='utf-8') as f:
-        enriched_count = sum(1 for _ in f) - 1
-    print(f"Found {enriched_count} org_fhir_url rows in enriched_endpoints.csv.")
 
     print("Aggregating compliance results per vendor...")
-    vendor_results = aggregate_vendor_compliance(enriched_path, org_to_npi_path, vendor_map)
-    print(f"Aggregated compliance for {len(vendor_results)} vendors.")
-
+    vendor_results = aggregate_vendor_compliance(enriched_path)
+    
     print("Writing dashboard CSV output...")
     with open(output_csv, "w", newline='', encoding="utf-8") as f:
         writer = csv.writer(f)
         header = ["Vendor"] + [c[0] for c in CHECKS]
         writer.writerow(header)
+        
         # Sort: most green (most True columns) at the top, then alphabetically
         def green_count(results):
             count = 0
@@ -308,6 +236,7 @@ def main():
             writer.writerow(row)
 
     print(f"Dashboard CSV written to {output_csv}")
+    print(f"Total vendors: {len(vendor_results)}")
 
 if __name__ == "__main__":
     main()

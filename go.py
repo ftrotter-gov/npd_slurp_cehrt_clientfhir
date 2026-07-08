@@ -337,7 +337,6 @@ def run_step_52():
 
 def run_step_89():
     """Step 89: Generate CEHRT Dashboard CSV."""
-    list_sources_path = get_env_var(key="LIST_SOURCES_SUMMARY", default_value="../npd_slurp_cehrt_clientfhir_cache/list_sources_summary.csv")
     enriched_endpoints_path = get_env_var(key="ENRICHED_ENDPOINTS", default_value="../npd_slurp_cehrt_clientfhir_cache/cache/summary_data/step52_enriched_endpoints.csv")
     output_csv_path = get_env_var(key="CEHRT_FHIR_REPORT_CSV", default_value="CEHRT_FHIR_Report.csv")
     
@@ -352,10 +351,9 @@ def run_step_89():
     
     run_step(
         step_num=89,
-        description="Generating CEHRT Dashboard CSV with compliance data",
+        description="Generating CEHRT Dashboard CSV with compliance data (aggregated by EHR vendor)",
         command_args=[
             "python", "Step89_GenerateCEHRTDashboardCSV.py",
-            "--list_sources_path", list_sources_path,
             "--enriched_endpoints_path", enriched_endpoints_path,
             "--output_csv_path", output_csv_path
         ]

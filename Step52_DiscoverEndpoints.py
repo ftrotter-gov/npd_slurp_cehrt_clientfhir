@@ -97,8 +97,8 @@ class EndpointDiscovery:
                     # Step 45 uses 'address' for endpoint URL, 'id' for UUID
                     endpoint_url = row.get('address', '').strip()
                     endpoint_uuid = row.get('id', '').strip()
-                    # Use vendor_name as a fallback for organization context
-                    org_name = row.get('name', '').strip() or row.get('vendor_name', '').strip()
+                    # Use vendor_name for aggregation by EHR vendor (not individual org name)
+                    vendor_name = row.get('vendor_name', '').strip()
                     
                     if endpoint_url:
                         # Get NPIs for this endpoint (may be multiple or none)
@@ -106,7 +106,7 @@ class EndpointDiscovery:
                         
                         # Create a row for each NPI (or one row with empty NPI if none)
                         for npi in npis if npis else ['']:
-                            data.append((endpoint_url, npi, org_name))
+                            data.append((endpoint_url, npi, vendor_name))
                         
         except FileNotFoundError:
             logger.error(f"Input file not found: {endpoint_file}")
@@ -261,7 +261,7 @@ class EndpointDiscovery:
         """Generate enriched output data"""
         enriched_data = []
         
-        for org_fhir_url, npi, org_name in endpoint_data:
+        for org_fhir_url, npi, vendor_name in endpoint_data:
             try:
                 parsed = urlparse(org_fhir_url)
                 domain = f"{parsed.scheme}://{parsed.netloc}/"
@@ -279,7 +279,7 @@ class EndpointDiscovery:
                 row = {
                     'org_fhir_url': org_fhir_url,
                     'npi': npi,
-                    'vendor_name': org_name,
+                    'vendor_name': vendor_name,
                     'https_org_url': https_org_url,
                     'capability_url': endpoints.get('capability_url', 'Error - failed to find capability url'),
                     'smart_url': endpoints.get('smart_url', 'Error - failed to find smart url'),
