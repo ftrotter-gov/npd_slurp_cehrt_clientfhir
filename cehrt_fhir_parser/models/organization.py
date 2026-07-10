@@ -158,8 +158,9 @@ class FHIROrganization(FHIRResource):
                 )
                 
                 npi_record = {
-                    'endpoint_instance_id': self.uuid_id,  # Using org UUID as foreign key
-                    'endpoint_instance_original_id': self._clean_string_value(self.original_id, 200),
+                    'resource_uuid': self.uuid_id,
+                    'resource_type': 'Organization',
+                    'resource_original_id': self._clean_string_value(self.original_id, 200),
                     'other_id': self._clean_string_value(value, 100),
                     'system': self._clean_string_value(system, 200),
                     'issuer_id': issuer_uuid,
@@ -197,7 +198,9 @@ class FHIROrganization(FHIRResource):
                 
                 # NPD record with only schema-compliant columns
                 npi_record = {
-                    'endpoint_instance_id': self.uuid_id,  # Using org UUID as foreign key
+                    'resource_uuid': self.uuid_id,
+                    'resource_type': 'Organization',
+                    'resource_original_id': self._clean_string_value(self.original_id, 200),
                     'other_id': self._clean_string_value(value, 100),
                     'system': self._clean_string_value(system, 200),
                     'issuer_id': issuer_uuid

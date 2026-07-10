@@ -1,0 +1,77 @@
+================================================================================
+CACHE DIRECTORY ANALYSIS REPORT
+================================================================================
+Cache Path: ../npd_slurp_cehrt_clientfhir_cache/cache/fhir_json_cache
+
+Total subdirectories scanned: 260
+Valid (modern layout):         246 (94.6%)
+Invalid (issues found):        14 (5.4%)
+
+--------------------------------------------------------------------------------
+DIRECTORIES WITH ISSUES:
+--------------------------------------------------------------------------------
+
+1. myhelo_inc_802873a6d332e780c07a692713ff2a15/
+   - EXTRA_SUBDIRS: Found unexpected subdirectories: unknown
+   Contents: organization/, endpoint/, unknown/
+
+2. unknown_5511c63964ce61dc842bc957609a3674/
+   - EMPTY: Directory contains no files or subdirectories
+   Contents: <empty>
+
+3. unknown_30993cd75b6a8a556abf786233d629c4/
+   - EMPTY: Directory contains no files or subdirectories
+   Contents: <empty>
+
+4. unknown_038f5af6618b2cdc4786fddd302e50c4/
+   - EMPTY: Directory contains no files or subdirectories
+   Contents: <empty>
+
+5. unknown_515d419ef63aab1cc40cdef033651ca8/
+   - EMPTY: Directory contains no files or subdirectories
+   Contents: <empty>
+
+6. medicasoft_llc_aee3b280419cee0f2d32c327269bb22e/
+   - MISSING_SUBDIRS: Missing required subdirectories: organization
+   Contents: endpoint/
+
+7. unknown_dc6fa45a9093c174da1ed55276148f4c/
+   - EMPTY: Directory contains no files or subdirectories
+   Contents: <empty>
+
+8. epic_systems_corporation_921c56431780413986cb50128eafdeec/
+   - MISSING_SUBDIRS: Missing required subdirectories: organization
+   Contents: endpoint/
+
+9. unknown_256eb76f3e6674f23e88c15d48b06a23/
+   - EMPTY: Directory contains no files or subdirectories
+   Contents: <empty>
+
+10. 1uphealth_744f5d25c1099987fc4d4a61eeaa83ac/
+   - EMPTY: Directory contains no files or subdirectories
+   Contents: <empty>
+
+11. unknown_7dbc29af3211d766ec3cb192eba2dab7/
+   - EMPTY: Directory contains no files or subdirectories
+   Contents: <empty>
+
+12. icare_com_inc_f313b4406b60534ddb2a0e5f84a79903/
+   - MISSING_SUBDIRS: Missing required subdirectories: organization
+   Contents: endpoint/
+
+13. kaiser_permanente_cids_93705eabef93bb4357402a185d269801/
+   - EMPTY: Directory contains no files or subdirectories
+   Contents: <empty>
+
+14. careevolution_inc_f7aa77b353a39427f1b6f6430268febf/
+   - EMPTY: Directory contains no files or subdirectories
+   Contents: <empty>
+
+--------------------------------------------------------------------------------
+SUMMARY BY ISSUE TYPE:
+--------------------------------------------------------------------------------
+  Empty Directories: 10
+  Missing Subdirectories: 3
+  Extra Subdirectories: 1
+
+================================================================================

@@ -62,62 +62,103 @@ class EndpointDiscovery:
         """Load endpoint and NPI data from Step 45 output files"""
         data = []
         
-        # Read endpoint_instance.csv from fhir_analysis directory (has full metadata)
-        endpoint_file = Path(input_dir) / 'fhir_analysis' / 'endpoint_instance.csv'
-        npi_file = Path(input_dir) / 'fhir_analysis' / 'endpoint_to_npi.csv'
+        # Read files from parser output directory
+        # Check for both organized structure (fhir_analysis/) and flat structure
+        input_path = Path(input_dir)
         
-        if not endpoint_file.exists():
-            logger.error(f"Endpoint file not found: {endpoint_file}")
-            return []
+        # Try organized structure first
+        if (input_path / 'fhir_analysis').exists():
+            endpoint_file = input_path / 'fhir_analysis' / 'endpoint_instance.csv'
+            organization_file = input_path / 'fhir_analysis' / 'organization.csv'
+            npi_file = input_path / 'fhir_analysis' / 'endpoint_to_npi.csv'
+        else:
+            # Use flat structure
+            endpoint_file = input_path / 'endpoint_instance.csv'
+            organization_file = input_path / 'organization.csv'
+            npi_file = input_path / 'endpoint_instance_to_other_id.csv'
         
-        # First, load NPI mappings from npd_endpoint_instance_to_other_id.csv
-        npi_map = {}  # endpoint_uuid -> list of NPIs
+        # First, load NPI mappings from endpoint_to_npi.csv
+        # NOTE: This file contains BOTH Endpoint UUIDs and Organization UUIDs
+        npi_map = {}  # resource_uuid -> list of NPIs
         if npi_file.exists():
             try:
                 with open(npi_file, 'r', newline='', encoding='utf-8') as csvfile:
                     reader = csv.DictReader(csvfile)
                     for row in reader:
-                        # Updated column names to match actual CSV structure
-                        endpoint_uuid = row.get('endpoint_instance_id', '').strip()
+                        # NEW: Uses clarified column names (resource_uuid, resource_type)
+                        resource_uuid = row.get('resource_uuid', '').strip()
+                        resource_type = row.get('resource_type', '').strip()
                         other_id = row.get('other_id', '').strip()
                         system = row.get('system', '').strip()
                         
                         # Check if this is an NPI (system contains 'us-npi')
-                        if endpoint_uuid and other_id and 'us-npi' in system.lower():
-                            if endpoint_uuid not in npi_map:
-                                npi_map[endpoint_uuid] = []
-                            npi_map[endpoint_uuid].append(other_id)
+                        if resource_uuid and other_id and 'us-npi' in system.lower():
+                            if resource_uuid not in npi_map:
+                                npi_map[resource_uuid] = []
+                            npi_map[resource_uuid].append(other_id)
+                
+                logger.info(f"Loaded NPI mappings for {len(npi_map)} resources")
             except Exception as e:
                 logger.warning(f"Error reading NPI mappings: {e}")
+        else:
+            logger.warning(f"NPI file not found: {npi_file}")
         
-        # Now load endpoint data
-        try:
-            with open(endpoint_file, 'r', newline='', encoding='utf-8') as csvfile:
-                reader = csv.DictReader(csvfile)
-                
-                for row in reader:
-                    # Step 45 uses 'address' for endpoint URL, 'id' for UUID
-                    endpoint_url = row.get('address', '').strip()
-                    endpoint_uuid = row.get('id', '').strip()
-                    # Use vendor_name for aggregation by EHR vendor (not individual org name)
-                    vendor_name = row.get('vendor_name', '').strip()
+        # Load endpoint data (technical FHIR servers)
+        if endpoint_file.exists():
+            try:
+                with open(endpoint_file, 'r', newline='', encoding='utf-8') as csvfile:
+                    reader = csv.DictReader(csvfile)
                     
-                    if endpoint_url:
-                        # Get NPIs for this endpoint (may be multiple or none)
-                        npis = npi_map.get(endpoint_uuid, [''])
+                    for row in reader:
+                        # Step 45 uses 'address' for endpoint URL, 'id' for UUID
+                        endpoint_url = row.get('address', '').strip()
+                        endpoint_uuid = row.get('id', '').strip()
+                        vendor_name = row.get('vendor_name', '').strip()
                         
-                        # Create a row for each NPI (or one row with empty NPI if none)
-                        for npi in npis if npis else ['']:
-                            data.append((endpoint_url, npi, vendor_name))
-                        
-        except FileNotFoundError:
-            logger.error(f"Input file not found: {endpoint_file}")
-            return []
-        except Exception as e:
-            logger.error(f"Error reading input file: {e}")
-            return []
+                        if endpoint_url:
+                            # Get NPIs for this endpoint (may be multiple or none)
+                            npis = npi_map.get(endpoint_uuid, [''])
+                            
+                            # Create a row for each NPI (or one row with empty NPI if none)
+                            for npi in npis if npis else ['']:
+                                data.append((endpoint_url, npi, vendor_name))
+                
+                logger.info(f"Loaded {len(data)} records from endpoint_instance.csv")
+            except Exception as e:
+                logger.error(f"Error reading endpoint file: {e}")
+        else:
+            logger.warning(f"Endpoint file not found: {endpoint_file}")
         
-        logger.info(f"Loaded {len(data)} endpoint records from Step 45 output")
+        # Load organization data (hospitals, clinics, practices)
+        # Organizations typically have NPIs, Endpoints typically don't
+        if organization_file.exists():
+            try:
+                org_count = 0
+                with open(organization_file, 'r', newline='', encoding='utf-8') as csvfile:
+                    reader = csv.DictReader(csvfile)
+                    
+                    for row in reader:
+                        # Organizations use 'full_url' as their address
+                        org_url = row.get('full_url', '').strip()
+                        org_uuid = row.get('id', '').strip()
+                        vendor_name = row.get('vendor_name', '').strip()
+                        
+                        if org_url:
+                            # Get NPIs for this organization (most Organizations have NPIs)
+                            npis = npi_map.get(org_uuid, [''])
+                            
+                            # Create a row for each NPI (or one row with empty NPI if none)
+                            for npi in npis if npis else ['']:
+                                data.append((org_url, npi, vendor_name))
+                                org_count += 1
+                
+                logger.info(f"Loaded {org_count} records from organization.csv")
+            except Exception as e:
+                logger.error(f"Error reading organization file: {e}")
+        else:
+            logger.warning(f"Organization file not found: {organization_file}")
+        
+        logger.info(f"Total loaded: {len(data)} endpoint records (Endpoints + Organizations)")
         return data
     
     @staticmethod
